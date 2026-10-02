@@ -72,6 +72,14 @@ function test_style_edit_moves_set_property_to_the_end(): void
     );
 }
 
+function test_style_edit_writes_radius_shorthand_before_corners(): void
+{
+    assert_same(
+        '<p style="border-radius: 4px; border-bottom-right-radius: 9px">x</p>',
+        style_on_first_tag('<p>x</p>', ['border-bottom-right-radius' => '9px', 'border-radius' => '4px'])
+    );
+}
+
 function test_set_attr_edit_replaces_inserts_and_fills_valueless(): void
 {
     $h = '<a href="/old" download>x</a>';

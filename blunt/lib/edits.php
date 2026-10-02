@@ -118,6 +118,8 @@ function blunt_style_edit(string $html, array $tag, array $set, array $unset): ?
     $decls = $attr === null ? [] : blunt_parse_style((string) blunt_attr_value($html, $attr));
     $drop = array_merge($unset, array_keys($set));
     $decls = array_values(array_filter($decls, fn (array $d) => !in_array($d[0], $drop, true)));
+    // The radius shorthand goes first so it never wipes out a single-corner radius set alongside it.
+    uksort($set, fn ($a, $b) => ($b === 'border-radius') <=> ($a === 'border-radius'));
     foreach ($set as $prop => $value) {
         $decls[] = [$prop, $value];
     }
