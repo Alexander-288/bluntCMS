@@ -1,0 +1,191 @@
+/* BluntCMS Light editor UI. Everything is prefixed .blunt- to stay out of the site's way. */
+
+.blunt-ui, .blunt-ui * {
+  box-sizing: border-box;
+  font: 500 13px/1.3 system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Toolbar */
+.blunt-toolbar {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+  user-select: none;
+  touch-action: none;
+  cursor: grab;
+}
+.blunt-toolbar.is-vertical { flex-direction: column; }
+
+.blunt-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+.blunt-btn:hover { background: rgba(255, 255, 255, .12); }
+.blunt-btn.is-active { background: #fff; color: #1a1a1a; }
+.blunt-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.blunt-btn svg { display: block; pointer-events: none; }
+
+.blunt-btn::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .12s;
+}
+.blunt-btn:hover::after { opacity: 1; }
+.blunt-toolbar.is-vertical .blunt-btn::after {
+  bottom: auto;
+  top: 50%;
+  left: calc(100% + 12px);
+  transform: translateY(-50%);
+}
+
+.blunt-divider { width: 1px; height: 24px; margin: 0 4px; background: rgba(255, 255, 255, .2); }
+.blunt-toolbar.is-vertical .blunt-divider { width: 24px; height: 1px; margin: 4px 0; }
+
+.blunt-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff5a36;
+  display: none;
+}
+.blunt-toolbar.is-dirty .blunt-dot { display: block; }
+
+/* Selection box and handles */
+.blunt-overlay { position: fixed; inset: 0; z-index: 2147483645; pointer-events: none; }
+.blunt-overlay[hidden] { display: none; }
+.blunt-box { position: absolute; outline: 1px solid #2f7bff; }
+.blunt-handle {
+  position: absolute;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  border: 1.5px solid #2f7bff;
+  background: #fff;
+  touch-action: none;
+}
+.blunt-corner { width: 10px; height: 10px; border-radius: 50%; cursor: crosshair; }
+.blunt-edge { width: 16px; height: 6px; border-radius: 3px; }
+.blunt-edge-top { left: 50%; top: 0; cursor: ns-resize; }
+.blunt-edge-bottom { left: 50%; top: 100%; cursor: ns-resize; }
+.blunt-edge-left { left: 0; top: 50%; width: 6px; height: 16px; cursor: ew-resize; }
+.blunt-edge-right { left: 100%; top: 50%; width: 6px; height: 16px; cursor: ew-resize; }
+
+.blunt-readout {
+  position: fixed;
+  z-index: 2147483647;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.blunt-readout[hidden] { display: none; }
+
+/* Popovers (link, fill) */
+.blunt-popover {
+  position: fixed;
+  z-index: 2147483647;
+  display: grid;
+  gap: 8px;
+  width: 240px;
+  padding: 12px;
+  border-radius: 18px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+.blunt-popover[hidden] { display: none; }
+.blunt-field { display: grid; gap: 6px; }
+.blunt-input {
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 10px;
+  background: #000;
+  color: #fff;
+}
+.blunt-seg { display: flex; gap: 2px; padding: 2px; border-radius: 999px; background: #000; }
+.blunt-seg button {
+  flex: 1;
+  margin: 0;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.blunt-seg button.is-active { background: #fff; color: #1a1a1a; }
+.blunt-color { display: block; width: 100%; height: 36px; margin: 0; padding: 0; border: 0; border-radius: 10px; background: none; cursor: pointer; }
+.blunt-check { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+.blunt-apply {
+  margin: 0;
+  padding: 9px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+.blunt-note { min-height: 1em; color: rgba(255, 255, 255, .6); font-size: 12px; }
+
+/* Toasts */
+.blunt-toasts {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+}
+.blunt-toast { padding: 10px 16px; border-radius: 999px; background: #1a1a1a; color: #fff; }
+.blunt-toast.is-error { border-radius: 16px; background: #b3261e; }
+
+/* Page hints while editing */
+html[data-blunt-tool="text"] [data-blunt]:hover { outline: 1px dashed #2f7bff; outline-offset: 2px; cursor: text; }
+.blunt-editing { outline: 2px solid #2f7bff !important; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .blunt-ui, .blunt-ui * { transition: none !important; }
+}
