@@ -32,13 +32,23 @@ Tools, left to right:
 
 Icons are inline SVG. No icon fonts or libraries.
 
+## Hover hint
+
+Before you click, the editor shows what the active tool would act on.
+
+- A **dashed outline** follows the shape of the element under the cursor
+- A **black tag** names it, like `article.card` or `Text · hero-title`
+- A **red tag** means the tool can't act there, like *has tags, can't edit* or *nothing to reset*
+- The **cursor** changes per tool — text cursor for Text, a paint bucket for Fill, an eraser for Reset
+- Hold `Ctrl` over a link and the tag says *Open link*
+
 ## Select
 
-Click **any** element to get a bounding box with handles, like shapes in Illustrator.
+Click **any** element to get a bounding box with handles, like shapes in Illustrator. A **white tag** above it shows the element and its size.
 
-- **Corner dots** — drag to change `border-radius` on all four corners
+- **Ring dots** inside the corners — drag to change `border-radius` on all four corners
 - **Alt + corner drag** — change *only that corner*, like `border-top-left-radius`
-- **Edge handles** — drag to change `padding` on that side
+- **Square handles** on the edges — drag to change `padding` on that side
 - **Alt + edge drag** — change `margin` instead
 
 ### Element vs token
@@ -58,7 +68,7 @@ Only elements marked with `data-blunt` are editable.
 <h1 data-blunt="hero-title">Hello world</h1>
 ```
 
-- Marked elements get a subtle outline on hover
+- Hovering a marked element shows its name; unmarked elements show nothing
 - Click to edit the text in place
 - `Enter` or click outside to finish, `Esc` to cancel
 - Plain text only — no bold or italics inside blocks

@@ -8,13 +8,6 @@
     ['Text', 'color'],
     ['Border', 'border-color'],
   ];
-  const ALL_PROPS = [
-    'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius',
-    'border-radius',
-    'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
-    'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
-    'color', 'background-color', 'border-color',
-  ];
   const HEX = /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 
   const pop = B.mk('div', 'blunt-ui blunt-popover', document.body);
@@ -115,7 +108,7 @@
 
   B.resetEl = (el) => {
     const group = [];
-    for (const prop of ALL_PROPS) {
+    for (const prop of B.STYLE_PROPS) {
       const before = B.currentStyle(el, prop);
       if (before !== '') group.push(B.styleRec(el, prop, before, ''));
     }

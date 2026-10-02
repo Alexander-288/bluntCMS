@@ -85,24 +85,75 @@
 }
 .blunt-toolbar.is-dirty .blunt-dot { display: block; }
 
-/* Selection box and handles */
-.blunt-overlay { position: fixed; inset: 0; z-index: 2147483645; pointer-events: none; }
-.blunt-overlay[hidden] { display: none; }
-.blunt-box { position: absolute; outline: 1px solid #2f7bff; }
+/* Selection: an Illustrator-style bounding box in the toolbar's black and white.
+   The white halo keeps every line readable on dark backgrounds too. */
+.blunt-overlay, .blunt-hover-layer { position: fixed; inset: 0; pointer-events: none; }
+.blunt-overlay { z-index: 2147483645; }
+.blunt-hover-layer { z-index: 2147483644; }
+.blunt-overlay[hidden], .blunt-hover-layer[hidden] { display: none; }
+
+.blunt-box {
+  position: absolute;
+  border: 1px solid #1a1a1a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .9);
+}
+
 .blunt-handle {
   position: absolute;
   pointer-events: auto;
   transform: translate(-50%, -50%);
-  border: 1.5px solid #2f7bff;
+  border: 1.5px solid #1a1a1a;
   background: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .9);
   touch-action: none;
+  transition: transform .1s, background-color .1s;
 }
-.blunt-corner { width: 10px; height: 10px; border-radius: 50%; cursor: crosshair; }
-.blunt-edge { width: 16px; height: 6px; border-radius: 3px; }
+
+/* Spacing handles: small squares on the edge midpoints */
+.blunt-edge { width: 9px; height: 9px; border-radius: 2px; }
+.blunt-edge:hover, .blunt-edge.is-active { background: #1a1a1a; }
 .blunt-edge-top { left: 50%; top: 0; cursor: ns-resize; }
 .blunt-edge-bottom { left: 50%; top: 100%; cursor: ns-resize; }
-.blunt-edge-left { left: 0; top: 50%; width: 6px; height: 16px; cursor: ew-resize; }
-.blunt-edge-right { left: 100%; top: 50%; width: 6px; height: 16px; cursor: ew-resize; }
+.blunt-edge-left { left: 0; top: 50%; cursor: ew-resize; }
+.blunt-edge-right { left: 100%; top: 50%; cursor: ew-resize; }
+
+/* Radius handles: Illustrator "live corner" widgets — a ring with a dot */
+.blunt-corner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1a1a1a 0 2px, #fff 2.5px);
+  cursor: crosshair;
+}
+.blunt-corner:hover, .blunt-corner.is-active {
+  transform: translate(-50%, -50%) scale(1.25);
+  background: radial-gradient(circle, #fff 0 2px, #1a1a1a 2.5px);
+}
+
+/* Hover hint: dashed outline that follows the element's shape */
+.blunt-hover {
+  position: absolute;
+  border: 1px dashed #1a1a1a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .7);
+}
+
+/* Name tags. Hover = black pill, selection = white pill (like the active toolbar button). */
+.blunt-tag {
+  position: absolute;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+}
+.blunt-ui .blunt-tag { font-size: 11px; font-weight: 600; }
+.blunt-tag.is-blocked { background: #b3261e; }
+.blunt-tag-selected { border: 1px solid #1a1a1a; background: #fff; color: #1a1a1a; }
+
+/* Per-tool cursor on the page (set by hover.js); editor UI keeps its own cursors */
+html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cursor, default) !important; }
 
 .blunt-readout {
   position: fixed;
@@ -183,8 +234,7 @@
 .blunt-toast.is-error { border-radius: 16px; background: #b3261e; }
 
 /* Page hints while editing */
-html[data-blunt-tool="text"] [data-blunt]:hover { outline: 1px dashed #2f7bff; outline-offset: 2px; cursor: text; }
-.blunt-editing { outline: 2px solid #2f7bff !important; outline-offset: 2px; }
+.blunt-editing { outline: 2px solid #1a1a1a !important; outline-offset: 3px; box-shadow: 0 0 0 5px rgba(255, 255, 255, .9) !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .blunt-ui, .blunt-ui * { transition: none !important; }

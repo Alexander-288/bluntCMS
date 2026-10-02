@@ -29,6 +29,27 @@
 
   B.isUi = (node) => !!(node && node.closest && node.closest('.blunt-ui'));
 
+  // Every inline style property the editor manages (same list as the server allowlist).
+  B.STYLE_PROPS = [
+    'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius',
+    'border-radius',
+    'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+    'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+    'color', 'background-color', 'border-color',
+  ];
+
+  /** Short human name for an element, e.g. "article.card" or "h1#title". */
+  B.describe = (el) => {
+    let s = el.tagName.toLowerCase();
+    const cls = [...el.classList].find((c) => !c.startsWith('blunt-'));
+    if (el.id) s += `#${el.id}`;
+    else if (cls) s += `.${cls}`;
+    return s;
+  };
+
+  /** How many editor-managed inline styles an element has. */
+  B.overrideCount = (el) => B.STYLE_PROPS.filter((p) => B.currentStyle(el, p) !== '').length;
+
   B.setTool = (tool) => {
     B.tool = tool;
     document.documentElement.dataset.bluntTool = tool;

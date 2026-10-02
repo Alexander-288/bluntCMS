@@ -23,6 +23,7 @@
   const layer = B.mk('div', 'blunt-ui blunt-overlay', document.body);
   layer.hidden = true;
   const box = B.mk('div', 'blunt-box', layer);
+  const label = B.mk('div', 'blunt-tag blunt-tag-selected', layer);
   const readout = B.mk('div', 'blunt-ui blunt-readout', document.body);
   readout.hidden = true;
   const handles = {};
@@ -46,7 +47,16 @@
       handles[key].style.left = `${ix > 0 ? inset : r.width - inset}px`;
       handles[key].style.top = `${iy > 0 ? inset : r.height - inset}px`;
     }
+    B.placeTag(label, r, `${B.describe(el)}  ${Math.round(r.width)} × ${Math.round(r.height)}`);
   }
+
+  /** Puts a tag pill just above the rect's top-left corner (or below it near the top of the screen). */
+  B.placeTag = (tag, r, text) => {
+    if (tag.textContent !== text) tag.textContent = text;
+    const top = r.top - tag.offsetHeight - 6 < 4 ? r.bottom + 6 : r.top - tag.offsetHeight - 6;
+    tag.style.top = `${top}px`;
+    tag.style.left = `${Math.min(Math.max(4, r.left), window.innerWidth - tag.offsetWidth - 4)}px`;
+  };
 
   function frame() {
     const el = B.selected;
@@ -108,6 +118,8 @@
       // pointer no longer active — the drag still works while over the handle
     }
 
+    handle.classList.add('is-active');
+    B.dragging = true;
     const plan = dragPlan(el, handleKey, e);
     const token = e.shiftKey ? B.tokenFor(el, plan.prop) : null;
     const sx = e.clientX;
@@ -143,6 +155,8 @@
       handle.removeEventListener('pointermove', onMove);
       handle.removeEventListener('pointerup', onUp);
       handle.removeEventListener('pointercancel', onUp);
+      handle.classList.remove('is-active');
+      B.dragging = false;
       readout.hidden = true;
       if (value === null) return;
       if (token) {
