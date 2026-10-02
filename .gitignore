@@ -1,0 +1,29 @@
+# AI assistant system / memory / plan files — never commit
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+GEMINI.md
+.claude/
+.claude-mem/
+.cursor/
+.cursorrules
+.windsurf/
+.aider*
+.copilot/
+.github/copilot-instructions.md
+.ai/
+docs/superpowers/
+plans/
+specs/
+*.plan.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Env
+.env
+.env.*
+!.env.example
