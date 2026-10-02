@@ -102,7 +102,11 @@
     e.preventDefault();
     e.stopPropagation();
     const handle = e.currentTarget;
-    handle.setPointerCapture(e.pointerId);
+    try {
+      handle.setPointerCapture(e.pointerId);
+    } catch {
+      // pointer no longer active — the drag still works while over the handle
+    }
 
     const plan = dragPlan(el, handleKey, e);
     const token = e.shiftKey ? B.tokenFor(el, plan.prop) : null;
@@ -113,6 +117,8 @@
     const before = {};
     if (token && token.name) {
       before.token = B.currentToken(token.name);
+      // Start from the token's own value, not the element's (which may be overridden inline).
+      if (/^-?\d+(\.\d+)?px$/.test(before.token)) plan.start = parseFloat(before.token);
     } else if (!token) {
       for (const p of [...plan.alsoClear, plan.prop]) before[p] = B.currentStyle(el, p);
     }

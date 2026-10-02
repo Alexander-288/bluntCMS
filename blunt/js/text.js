@@ -5,14 +5,14 @@
   const B = window.Blunt;
   const pop = B.mk('div', 'blunt-ui blunt-popover', document.body);
   pop.hidden = true;
-  let editing = null;
+  let editing = null; // { el, done }
 
   const finishEdit = () => {
-    if (editing) editing.blur();
+    if (editing) editing.done();
   };
 
   function startEdit(el, name) {
-    if (editing === el) return;
+    if (editing && editing.el === el) return;
     finishEdit();
     const before = el.textContent;
     try {
@@ -21,35 +21,37 @@
       el.contentEditable = 'true';
     }
     el.classList.add('blunt-editing');
-    editing = el;
-    el.focus();
 
     const onKey = (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        el.blur();
+        done();
       } else if (e.key === 'Escape') {
         el.textContent = before;
-        el.blur();
+        done();
       }
     };
     const onPaste = (e) => {
       e.preventDefault();
       document.execCommand('insertText', false, e.clipboardData.getData('text/plain'));
     };
-    const onBlur = () => {
+    const done = () => {
+      if (!editing || editing.el !== el) return;
+      editing = null;
       el.removeEventListener('keydown', onKey);
       el.removeEventListener('paste', onPaste);
-      el.removeEventListener('blur', onBlur);
+      el.removeEventListener('blur', done);
       el.removeAttribute('contenteditable');
       el.classList.remove('blunt-editing');
       if (el.children.length) el.textContent = el.textContent; // flatten anything the browser inserted
-      editing = null;
+      if (document.activeElement === el) el.blur();
       B.commit([{ kind: 'text', el, name, before, after: el.textContent }]);
     };
     el.addEventListener('keydown', onKey);
     el.addEventListener('paste', onPaste);
-    el.addEventListener('blur', onBlur);
+    el.addEventListener('blur', done);
+    editing = { el, done };
+    el.focus();
   }
 
   function openHref(el, name) {
@@ -105,4 +107,5 @@
     finishEdit();
     pop.hidden = true;
   });
+  B.on('beforesave', finishEdit);
 })();

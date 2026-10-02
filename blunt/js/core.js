@@ -137,6 +137,7 @@
 
   B.save = async () => {
     if (B.saving) return;
+    B.emit('beforesave');
     if (!B.pending.size) {
       B.toast('Nothing to save.');
       return;
