@@ -1,6 +1,6 @@
 # Architecture
 
-*Status: planned for BluntCMS Light. Not built yet.*
+*BluntCMS Light*
 
 ## Principles
 
@@ -10,7 +10,7 @@
 
 ## Requirements
 
-- **PHP 8.1 or newer** on the server. Works on 8.2, 8.3 and 8.4 too.
+- **PHP 8.1 or newer** on the server. Written for 8.1, tested on 8.5.
 - No extra PHP extensions beyond the defaults.
 
 ## Files
@@ -19,15 +19,16 @@
 blunt/
   config.php      password hash and token CSS file path (made by setup.php)
   setup.php       first run: set the password, then it locks itself
-  login.php       login form and session start
+  login.php       login form, lockout, logout
   edit.php        auth check, loads the page, injects the editor, rewrites links
   save.php        receives changes as JSON, writes them into the files
-  lib.php         shared helpers: auth check, safe paths, CSRF
-  editor.js       toolbar, selection box, drag handles, text editing
+  lib.php         loads everything in lib/
+  lib/            scanner, edits, tokens, validation, paths, auth, backups
   editor.css      toolbar and handle styling
+  js/             editor: core, tokens, toolbar, overlay, text, fill, main
   backups/        previous versions of each file
   data/           runtime state, like the login lockout
-  .htaccess       blocks direct access to config, data and backups
+  .htaccess       blocks direct access to config, lib, data and backups
 ```
 
 ## Where changes are saved
@@ -40,7 +41,7 @@ blunt/
 
 Only the changed characters are rewritten. Everything else in your file stays **byte-for-byte identical** — indentation, quotes, comments, line breaks. A one-word change is a one-word diff.
 
-A small scanner in `lib.php` finds the exact position of each element's opening tag and text in the file and replaces just those characters. PHP's `DOMDocument` is *not* used for writing, because it re-outputs and reformats the whole file.
+A small scanner in `lib/scanner.php` finds the exact position of each element's opening tag and text in the file and replaces just those characters. PHP's `DOMDocument` is *not* used for writing, because it re-outputs and reformats the whole file.
 
 ### How elements are matched
 

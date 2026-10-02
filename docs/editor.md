@@ -1,6 +1,6 @@
 # The editor
 
-*Status: planned for BluntCMS Light. Not built yet.*
+*BluntCMS Light*
 
 ## Opening the editor
 
@@ -8,7 +8,7 @@ Go to `/blunt/edit.php?page=about.html` and log in. The page loads with the edit
 
 - Your `.html` files never contain any CMS code
 - Visitors never load the editor
-- Internal links are rewritten while editing, so clicking *About* takes you to `edit.php?page=about.html` and keeps you in edit mode
+- **Ctrl + click** (or **Cmd + click** on Mac) a link to follow it and stay in edit mode — a plain click selects or edits it instead
 
 ## Toolbar
 
@@ -60,8 +60,9 @@ Only elements marked with `data-blunt` are editable.
 
 - Marked elements get a subtle outline on hover
 - Click to edit the text in place
-- `Esc` or click outside to finish
+- `Enter` or click outside to finish, `Esc` to cancel
 - Plain text only — no bold or italics inside blocks
+- A block that already contains tags, like `<strong>`, can't be edited in Light
 
 ### Links
 
@@ -77,11 +78,12 @@ Select an element, then pick a colour.
 
 - Colour picker plus a hex field
 - Choose the target: *background*, *text* or *border*
-- `Shift` applies the colour to the linked token instead
+- Press **Apply**
+- **Shift + Apply**, or tick *Shared token*, applies the colour to the linked token instead
 
 ## Reset
 
-Click an element to remove the inline style overrides added by the editor. Token values are not touched.
+Click an element to remove its inline radius, spacing and colour styles. Token values are not touched.
 
 ## Undo
 
@@ -89,6 +91,15 @@ Click an element to remove the inline style overrides added by the editor. Token
 - `Ctrl+Shift+Z` — redo
 
 Undo history lives in memory until you save.
+
+## Keyboard
+
+- `V` — Select
+- `T` — Text
+- `F` — Fill
+- `R` — Reset
+- `Ctrl+S` — Save
+- `Esc` — deselect
 
 ## Browser support
 

@@ -59,4 +59,4 @@ Names beyond Light are not final.
 
 ## Status
 
-Early planning. Nothing to install yet.
+**BluntCMS Light** works. See `docs/install.md` to set it up and `docs/editor.md` for how to use it.
