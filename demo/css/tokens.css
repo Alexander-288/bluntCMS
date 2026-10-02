@@ -1,0 +1,9 @@
+/* Shared design tokens. Shift-drag in the editor changes these. */
+:root {
+  --surface: #ececec;
+  --text: #1a1a1a;
+  --accent: #1a1a1a;
+  --card-radius: 24px;
+  --button-radius: 999px;
+  --gap: 24px;
+}

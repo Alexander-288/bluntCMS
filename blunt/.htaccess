@@ -1,0 +1,7 @@
+# Extra protection on Apache. BluntCMS does not rely on this.
+<Files "config.php">
+  Require all denied
+</Files>
+<FilesMatch "\.(bak|json|blunt-tmp)$">
+  Require all denied
+</FilesMatch>
