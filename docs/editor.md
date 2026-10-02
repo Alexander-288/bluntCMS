@@ -36,7 +36,8 @@ Icons are inline SVG. No icon fonts or libraries.
 
 Click **any** element to get a bounding box with handles, like shapes in Illustrator.
 
-- **Corner dots** — drag to change `border-radius`
+- **Corner dots** — drag to change `border-radius` on all four corners
+- **Alt + corner drag** — change *only that corner*, like `border-top-left-radius`
 - **Edge handles** — drag to change `padding` on that side
 - **Alt + edge drag** — change `margin` instead
 

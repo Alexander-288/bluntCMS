@@ -67,7 +67,7 @@ The editor sends a fingerprint of the file as it was when opened. If the file ch
 
 - Every save needs a **CSRF token** from the session
 - Any `.html` file inside the site folder can be edited — nothing outside it, nothing inside `blunt/`, no `../` tricks
-- **Allowlisted styles only** — `border-radius`, `padding-*`, `margin-*`, `color`, `background-color`, `border-color`, with plain values like `12px`, `1.5rem`, `#ff0000`
+- **Allowlisted styles only** — `border-radius` and the four single-corner radii, `padding-*`, `margin-*`, `color`, `background-color`, `border-color`, with plain values like `12px`, `1.5rem`, `#ff0000`
 - **Text is escaped** — typing `<script>` saves as literal text
 - Links starting with `javascript:` are rejected
 - Files are written to a temp file first, then swapped in, so a crash can't leave half a file
