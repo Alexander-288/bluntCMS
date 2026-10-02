@@ -6,3 +6,4 @@ require_once __DIR__ . '/lib/validate.php';
 require_once __DIR__ . '/lib/paths.php';
 require_once __DIR__ . '/lib/scanner.php';
 require_once __DIR__ . '/lib/edits.php';
+require_once __DIR__ . '/lib/tokens.php';
