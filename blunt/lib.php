@@ -9,3 +9,4 @@ require_once __DIR__ . '/lib/edits.php';
 require_once __DIR__ . '/lib/tokens.php';
 require_once __DIR__ . '/lib/files.php';
 require_once __DIR__ . '/lib/auth.php';
+require_once __DIR__ . '/lib/view.php';
