@@ -17,7 +17,7 @@
 
 ```
 blunt/
-  config.php      password hash, editable pages, token CSS file path
+  config.php      password hash and token CSS file path (made by setup.php)
   setup.php       first run: set the password, then it locks itself
   login.php       login form and session start
   edit.php        auth check, loads the page, injects the editor, rewrites links
@@ -26,6 +26,8 @@ blunt/
   editor.js       toolbar, selection box, drag handles, text editing
   editor.css      toolbar and handle styling
   backups/        previous versions of each file
+  data/           runtime state, like the login lockout
+  .htaccess       blocks direct access to config, data and backups
 ```
 
 ## Where changes are saved
@@ -34,7 +36,53 @@ blunt/
 - **Element styles** — written as an inline `style=""` on the element
 - **Token styles** — the `--name: value;` line is updated in the token CSS file set in `config.php`
 
-HTML is edited with PHP's `DOMDocument`, not regex, so the markup is not mangled.
+### Surgical edits
+
+Only the changed characters are rewritten. Everything else in your file stays **byte-for-byte identical** — indentation, quotes, comments, line breaks. A one-word change is a one-word diff.
+
+A small scanner in `lib.php` finds the exact position of each element's opening tag and text in the file and replaces just those characters. PHP's `DOMDocument` is *not* used for writing, because it re-outputs and reformats the whole file.
+
+### How elements are matched
+
+- `edit.php` gives every element a temporary ID based on its order in the source file. These IDs only exist in the editor and are never saved.
+- On save, the editor sends a list of changes by ID, by `data-blunt` name, and by token name.
+- `save.php` scans the file again, counts elements the same way, and applies the changes.
+- Elements created by the page's own JavaScript are not in the source file, so they cannot be selected.
+
+### Changed-file check
+
+The editor sends a fingerprint of the file as it was when opened. If the file changed since then — an FTP upload, another tab — the save is refused with *"this page changed since you opened it, reload"*. Nothing is written to the wrong place.
+
+## Security
+
+### Login
+
+- Password stored with `password_hash`, never in plain text
+- Session cookie is `HttpOnly`, `SameSite=Strict`, and `Secure` on HTTPS
+- Session ID is renewed on login
+- **Lockout** — 5 wrong passwords blocks login for 5 minutes
+- `setup.php` refuses to run once a password exists
+
+### Saving
+
+- Every save needs a **CSRF token** from the session
+- Any `.html` file inside the site folder can be edited — nothing outside it, nothing inside `blunt/`, no `../` tricks
+- **Allowlisted styles only** — `border-radius`, `padding-*`, `margin-*`, `color`, `background-color`, `border-color`, with plain values like `12px`, `1.5rem`, `#ff0000`
+- **Text is escaped** — typing `<script>` saves as literal text
+- Links starting with `javascript:` are rejected
+- Files are written to a temp file first, then swapped in, so a crash can't leave half a file
+
+## Errors
+
+- `save.php` always answers with JSON. On error the editor shows a short message and *keeps your unsaved changes*
+- Closing the tab with unsaved changes shows the browser's *leave page?* warning
+- A marked element that contains other tags, like `<p data-blunt="x">Hi <b>there</b></p>`, can't be text-edited — plain-text editing would erase the `<b>`
+
+## Testing
+
+- **PHP** — `php tests/run.php`. A plain test script, no PHPUnit, no Composer
+- **Demo site** — `demo/` has a few marked-up pages and a token CSS file. It is the example for new users and the place to test the editor by hand
+- **Editor JS** — tested by hand against the demo with a short checklist
 
 ## Backups
 
