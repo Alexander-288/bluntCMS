@@ -1,0 +1,113 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * Validates every change, then applies them all. Returns ['html' => ..., 'css' => ...].
+ * Throws BluntError on the first invalid change; nothing is partially applied.
+ */
+function blunt_apply_changes(string $html, ?string $css, array $changes): array
+{
+    $tags = blunt_scan($html);
+    $named = blunt_named($html, $tags);
+    $edits = [];
+    $styles = [];
+    $tokens = [];
+
+    foreach ($changes as $i => $change) {
+        $n = (int) $i + 1;
+        if (!is_array($change)) {
+            throw new BluntError("Change $n is malformed.");
+        }
+        $type = $change['type'] ?? '';
+        switch ($type) {
+            case 'text':
+            case 'href':
+                $name = (string) ($change['name'] ?? '');
+                $value = $change['value'] ?? null;
+                if (!is_string($value)) {
+                    throw new BluntError("Change $n has no value.");
+                }
+                $ids = $named[$name] ?? [];
+                if ($ids === []) {
+                    throw new BluntError("No block named \"$name\" on this page.");
+                }
+                if (count($ids) > 1) {
+                    throw new BluntError("The name \"$name\" is used more than once on this page.");
+                }
+                $tag = $tags[$ids[0]];
+                if ($type === 'text') {
+                    if (!blunt_valid_text($value)) {
+                        throw new BluntError("The text for \"$name\" is too long or not valid text.");
+                    }
+                    $range = blunt_content_range($html, $tags, $tag['index']);
+                    if ($range === null) {
+                        throw new BluntError("Can't find where \"$name\" ends in the file.");
+                    }
+                    if (str_contains(substr($html, $range['start'], $range['end'] - $range['start']), '<')) {
+                        throw new BluntError("\"$name\" contains HTML tags and can't be edited as plain text.");
+                    }
+                    $edits[] = [$range['start'], $range['end'], htmlspecialchars($value, ENT_NOQUOTES | ENT_HTML5, 'UTF-8')];
+                } else {
+                    if ($tag['name'] !== 'a') {
+                        throw new BluntError("\"$name\" is not a link.");
+                    }
+                    if (!blunt_valid_href($value)) {
+                        throw new BluntError('That link address is not allowed.');
+                    }
+                    $edits[] = blunt_set_attr_edit($html, $tag, 'href', trim($value));
+                }
+                break;
+
+            case 'style':
+                $id = $change['id'] ?? null;
+                if (!is_int($id) || !isset($tags[$id])) {
+                    throw new BluntError("Change $n points at an element that doesn't exist.");
+                }
+                $set = $change['set'] ?? [];
+                $unset = $change['unset'] ?? [];
+                if (!is_array($set) || !is_array($unset)) {
+                    throw new BluntError("Change $n is malformed.");
+                }
+                foreach ($set as $prop => $value) {
+                    if (!is_string($value) || !blunt_valid_style((string) $prop, $value)) {
+                        throw new BluntError("The style \"$prop\" with that value is not allowed.");
+                    }
+                    $styles[$id]['set'][(string) $prop] = $value;
+                }
+                foreach ($unset as $prop) {
+                    if (!is_string($prop) || !in_array($prop, BLUNT_STYLE_PROPS, true)) {
+                        throw new BluntError('Removing that style is not allowed.');
+                    }
+                    $styles[$id]['unset'][] = $prop;
+                }
+                break;
+
+            case 'token':
+                if ($css === null) {
+                    throw new BluntError('No token file is set up.');
+                }
+                $name = (string) ($change['name'] ?? '');
+                $value = $change['value'] ?? null;
+                if (!blunt_valid_token_name($name) || !is_string($value) || !blunt_valid_token_value($value)) {
+                    throw new BluntError("The value for token $name is not allowed.");
+                }
+                $tokens[$name] = $value;
+                break;
+
+            default:
+                throw new BluntError("Change $n has an unknown type.");
+        }
+    }
+
+    foreach ($styles as $id => $style) {
+        $edit = blunt_style_edit($html, $tags[$id], $style['set'] ?? [], $style['unset'] ?? []);
+        if ($edit !== null) {
+            $edits[] = $edit;
+        }
+    }
+    $newHtml = blunt_apply_edits($html, $edits);
+    foreach ($tokens as $name => $value) {
+        $css = blunt_set_token((string) $css, $name, $value);
+    }
+    return ['html' => $newHtml, 'css' => $css];
+}
