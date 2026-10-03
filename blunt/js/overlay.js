@@ -149,6 +149,7 @@
         el.style.setProperty(plan.prop, value);
         showReadout(ev, `${plan.label} ${value}`);
       }
+      B.emit('live');
     };
 
     const onUp = () => {

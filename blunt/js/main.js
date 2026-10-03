@@ -35,8 +35,7 @@
     if (B.tool === 'select') {
       B.select(el);
     } else if (B.tool === 'fill') {
-      B.select(el);
-      B.openFill(el);
+      B.paintClick(el, e);
     } else if (B.tool === 'reset') {
       B.resetEl(el);
     }

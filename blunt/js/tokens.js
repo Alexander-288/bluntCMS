@@ -10,6 +10,8 @@
     'margin-top': 'margin', 'margin-right': 'margin', 'margin-bottom': 'margin', 'margin-left': 'margin',
     'border-top-left-radius': 'border-radius', 'border-top-right-radius': 'border-radius',
     'border-bottom-right-radius': 'border-radius', 'border-bottom-left-radius': 'border-radius',
+    'border-top-width': 'border-width', 'border-right-width': 'border-width',
+    'border-bottom-width': 'border-width', 'border-left-width': 'border-width',
     'background-color': 'background',
   };
 

@@ -25,7 +25,7 @@ blunt/
   lib.php         loads everything in lib/
   lib/            scanner, edits, tokens, validation, paths, auth, backups
   editor.css      toolbar and handle styling
-  js/             editor: core, tokens, toolbar, overlay, hover, text, fill, main
+  js/             editor: core, tokens, toolbar, overlay, hover, text, fill, panel, main
   backups/        previous versions of each file
   data/           runtime state, like the login lockout
   .htaccess       blocks direct access to config, lib, data and backups
@@ -68,7 +68,8 @@ The editor sends a fingerprint of the file as it was when opened. If the file ch
 
 - Every save needs a **CSRF token** from the session
 - Any `.html` file inside the site folder can be edited — nothing outside it, nothing inside `blunt/`, no `../` tricks
-- **Allowlisted styles only** — `border-radius` and the four single-corner radii, `padding-*`, `margin-*`, `color`, `background-color`, `border-color`, with plain values like `12px`, `1.5rem`, `#ff0000`
+- **Allowlisted styles only** — radius (all or per corner), `padding-*`, `margin-*` (`auto` allowed on left and right), border widths, `border-style`, colours, `text-align`, `justify-content`, `align-items` and `gap`. Values must be plain sizes like `12px` or `1.5rem`, hex colours like `#ff0000`, or one of a fixed list of keywords
+- Position, size, z-index and display are rejected — they belong to BluntCMS Thick
 - **Text is escaped** — typing `<script>` saves as literal text
 - Links starting with `javascript:` are rejected
 - Files are written to a temp file first, then swapped in, so a crash can't leave half a file

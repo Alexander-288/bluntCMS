@@ -20,13 +20,16 @@
 
   let pointer = null; // { target, mod }
   document.addEventListener('pointermove', (e) => {
-    pointer = { target: e.target, mod: e.ctrlKey || e.metaKey };
+    pointer = { target: e.target, mod: e.ctrlKey || e.metaKey, alt: e.altKey, shift: e.shiftKey };
   }, { passive: true });
   document.documentElement.addEventListener('mouseleave', () => {
     pointer = null;
   });
   const trackMod = (e) => {
-    if (pointer) pointer.mod = e.ctrlKey || e.metaKey;
+    if (!pointer) return;
+    pointer.mod = e.ctrlKey || e.metaKey;
+    pointer.alt = e.altKey;
+    pointer.shift = e.shiftKey;
   };
   document.addEventListener('keydown', trackMod);
   document.addEventListener('keyup', trackMod);
@@ -50,7 +53,10 @@
 
     const el = t.closest('[data-blunt-id]');
     if (!el) return { el: null, cursor: 'default' };
-    if (B.tool === 'fill') return { el, text: `Fill · ${B.describe(el)}`, cursor: CURSORS.fill };
+    if (B.tool === 'fill') {
+      const action = p.alt ? 'Pick colour' : p.shift ? 'Paint token' : `Paint ${B.paint.color}`;
+      return { el, text: `${action} · ${B.describe(el)}`, cursor: CURSORS.fill };
+    }
     if (B.tool === 'reset') {
       const n = B.overrideCount(el);
       return n

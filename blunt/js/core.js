@@ -35,8 +35,18 @@
     'border-radius',
     'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
     'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+    'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
+    'gap',
     'color', 'background-color', 'border-color',
+    'border-style', 'text-align', 'justify-content', 'align-items',
   ];
+
+  /** "rgb(26, 26, 26)" -> "#1a1a1a" (alpha ignored). */
+  B.toHex = (rgb) => {
+    const m = String(rgb).match(/[\d.]+/g);
+    if (!m || m.length < 3) return '#000000';
+    return `#${m.slice(0, 3).map((n) => Math.round(Number(n)).toString(16).padStart(2, '0')).join('')}`;
+  };
 
   /** Short human name for an element, e.g. "article.card" or "h1#title". */
   B.describe = (el) => {

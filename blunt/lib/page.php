@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-const BLUNT_EDITOR_SCRIPTS = ['core.js', 'tokens.js', 'toolbar.js', 'overlay.js', 'hover.js', 'text.js', 'fill.js', 'main.js'];
+const BLUNT_EDITOR_SCRIPTS = ['core.js', 'tokens.js', 'toolbar.js', 'overlay.js', 'hover.js', 'text.js', 'fill.js', 'panel.js', 'main.js'];
 
 /**
  * Resolves an href found on $pageRel to a site-relative .html path.

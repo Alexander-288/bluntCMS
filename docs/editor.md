@@ -82,18 +82,42 @@ A marked link also shows a small popover with an `href` field.
 <a data-blunt="cta-link" href="/contact">Get in touch</a>
 ```
 
+## Inspector panel
+
+A dark panel shows every style BluntCMS can edit for the selected element. It is always open.
+
+- **Drag** its header to move it, **double-click** the header to collapse it — it remembers both
+- **Tokens** button — while on, edits go to the shared token instead of the element. Holding `Shift` does the same for one drag or click
+- A **white outline** on a field means the value is set on this element itself
+- A **dotted underline** means the value comes from a token you can edit
+
+### Number fields
+
+- **Drag** sideways to scrub the value
+- **Click** to type — `12`, `12px`, `1.5rem` or `50%`
+- `↑` / `↓` change by 1, with `Shift` by 10
+- **Empty** the field to clear the value from the element
+
+### Tabs
+
+- **Box** — a margin, border and padding diagram with all four sides of each
+- **Border** — style (*none*, *solid*, *dashed*, *dotted*), width for all sides or each side, colour, radius for all corners or each corner
+- **Colour** — text, background and border colour
+- **Layout** — text alignment, *Centre in parent*, and for flex or grid containers: justify, align and gap
+
+Position, size, z-index and display are not in Light. They are planned for **BluntCMS Thick**.
+
 ## Fill
 
-Select an element, then pick a colour.
+A paint bucket. Set the **paint colour** and target (*background*, *text* or *border*) at the top of the panel.
 
-- Colour picker plus a hex field
-- Choose the target: *background*, *text* or *border*
-- Press **Apply**
-- **Shift + Apply**, or tick *Shared token*, applies the colour to the linked token instead
+- **Click** an element to paint it
+- **Alt + click** picks up an element's colour
+- **Shift + click** paints the linked token instead
 
 ## Reset
 
-Click an element to remove its inline radius, spacing and colour styles. Token values are not touched.
+Click an element to remove every inline style BluntCMS manages on it. Token values are not touched.
 
 ## Undo
 
