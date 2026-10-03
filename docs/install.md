@@ -2,6 +2,8 @@
 
 *BluntCMS Light*
 
+The short version. For a guided walkthrough, see the **[tutorial](tutorial.md)**.
+
 ## Requirements
 
 - **PHP 8.1 or newer**

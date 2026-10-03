@@ -12,6 +12,8 @@ Covers the HTML scanner, byte-exact edits, the token updater, value validation, 
 
 Run one group with a filter, for example `php tests/run.php scanner`.
 
+On GitHub, the **Tests** workflow runs these on PHP 8.1 and 8.4, and checks the editor's JavaScript syntax, for every push and pull request.
+
 ## By hand
 
 Start a local server from the repo root:
