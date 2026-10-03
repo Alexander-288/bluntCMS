@@ -33,6 +33,8 @@ The demo page walks you through six things to try. After you save, run `git diff
 
 **Using it on your own site?** Follow the **[tutorial](docs/tutorial.md)** — it takes about ten minutes.
 
+**Want to hear about new versions?** Click **Watch → Custom → Releases** at the top of this page. Stars don't send notifications; watching for releases does. Questions and news live in **[Discussions](https://github.com/Alexander-288/bluntCMS/discussions)**.
+
 ## What you can edit
 
 - **Text** — any element you mark with `data-blunt="name"`
