@@ -97,10 +97,15 @@
     const b = iconButton(bar, id, label);
     b.setAttribute('role', 'tab');
     b.addEventListener('click', () => {
-      tab = id;
-      state.tab = id;
-      store();
-      render();
+      if (tab === id && !state.collapsed) return;
+      morph(() => {
+        tab = id;
+        state.tab = id;
+        state.collapsed = false;
+        store();
+        applyState();
+        render();
+      });
     });
     tabButtons[id] = b;
   }
@@ -120,6 +125,37 @@
   const sizeText = B.mk('span', 'blunt-size', nameLine);
   const body = B.mk('div', 'blunt-panel-body', panel);
   body.setAttribute('role', 'tabpanel');
+
+  // ---- Height changes animate with a clip-path wipe ----
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  // Negative insets leave room for the shadow on top and sides; the bottom edge is the moving cut, rounded like the panel.
+  const clip = (cut) => `inset(-40px -40px ${Math.max(0, cut)}px -40px round 26px)`;
+  let morphing = null;
+
+  /** Runs change(), then wipes the panel open (grow) or closed (shrink) between the old and new height. */
+  function morph(change) {
+    if (morphing) morphing.finish();
+    const before = panel.getBoundingClientRect().height;
+    change();
+    const after = panel.getBoundingClientRect().height;
+    if (reducedMotion.matches || Math.abs(after - before) < 2) return;
+    const timing = { duration: 280, easing: 'cubic-bezier(.2, .8, .2, 1)' };
+    if (after > before) {
+      morphing = panel.animate([{ clipPath: clip(after - before) }, { clipPath: clip(0) }], timing);
+    } else {
+      // Hold the old height while the cut moves up, then let the panel settle.
+      panel.style.height = `${before}px`;
+      morphing = panel.animate([{ clipPath: clip(0) }, { clipPath: clip(before - after) }], timing);
+      const settle = () => {
+        panel.style.height = '';
+      };
+      morphing.addEventListener('finish', settle);
+      morphing.addEventListener('cancel', settle);
+    }
+    if (!state.collapsed) {
+      body.animate([{ opacity: 0, transform: 'translateY(-4px)' }, { opacity: 1, transform: 'none' }], { duration: 200, easing: 'ease-out' });
+    }
+  }
 
   // ---- Drag (anywhere on the bar or name line), double-click to collapse ----
   const clamp = (v, max) => Math.min(Math.max(0, v), Math.max(0, max));
@@ -150,9 +186,11 @@
     });
     handle.addEventListener('dblclick', (e) => {
       if (e.target.closest('button')) return;
-      state.collapsed = !state.collapsed;
-      applyState();
-      store();
+      morph(() => {
+        state.collapsed = !state.collapsed;
+        applyState();
+        store();
+      });
     });
   }
   window.addEventListener('pointermove', (e) => {
@@ -601,7 +639,7 @@
     refresh();
   }
 
-  B.on('select', render);
+  B.on('select', () => morph(render));
   B.on('change', refresh);
   B.on('live', refresh);
   render();
