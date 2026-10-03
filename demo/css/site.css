@@ -39,3 +39,14 @@ nav a { color: inherit; }
 }
 .card h2 { margin: 0 0 8px; font-size: 20px; }
 .card p { margin: 0; }
+
+.section-title { margin: 0 0 16px; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: #6b6b6b; }
+
+.step { display: block; margin-bottom: 10px; font-size: 13px; font-weight: 600; color: #6b6b6b; }
+
+.prose { max-width: 40em; padding-bottom: 32px; }
+.prose h2 { margin: 32px 0 8px; font-size: 22px; }
+.prose p { margin: 0 0 12px; }
+
+footer { padding: 24px 0 48px; color: #6b6b6b; font-size: 14px; }
+footer p { margin: 0; }

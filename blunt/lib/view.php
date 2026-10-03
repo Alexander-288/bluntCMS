@@ -24,5 +24,7 @@ function blunt_render(string $title, string $body): void
         . '.error{padding:10px 14px;border-radius:12px;background:#fde8e6;color:#8c1d14}'
         . '.hint{color:#666;font-size:13px;font-weight:400}'
         . 'code{padding:1px 5px;border-radius:6px;background:#f0f0f0}'
-        . '</style></head><body><main><h1>' . e($title) . '</h1>' . $body . '</main></body></html>';
+        . 'footer{margin-top:20px;color:#999;font-size:12px;text-align:center}'
+        . '</style></head><body><main><h1>' . e($title) . '</h1>' . $body
+        . '<footer>BluntCMS ' . e(BLUNT_VERSION) . '</footer></main></body></html>';
 }
