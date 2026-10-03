@@ -1,0 +1,507 @@
+/* BluntCMS Light editor UI. Everything is prefixed .blunt- to stay out of the site's way. */
+
+.blunt-ui, .blunt-ui * {
+  box-sizing: border-box;
+  font: 500 13px/1.3 system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Toolbar */
+.blunt-toolbar {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+  user-select: none;
+  touch-action: none;
+  cursor: grab;
+}
+.blunt-toolbar.is-vertical { flex-direction: column; }
+
+.blunt-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+.blunt-btn:hover { background: rgba(255, 255, 255, .12); }
+.blunt-btn.is-active { background: #fff; color: #1a1a1a; }
+
+/* Liquid "blob" behind the active tool / tab (see B.makeBlob). */
+.blunt-blob {
+  position: absolute;
+  border-radius: 999px;
+  background: #fff;
+  pointer-events: none;
+}
+.blunt-blob[hidden] { display: none; }
+/* Icons blend with "difference": white over the dark bar, dark wherever the white blob is —
+   including mid-stretch, so icons the blob passes over never disappear. */
+.blunt-btn.is-blobbed, .blunt-ibtn.is-blobbed { position: relative; }
+.blunt-btn.is-blobbed svg, .blunt-ibtn.is-blobbed svg { mix-blend-mode: difference; }
+.blunt-btn.is-blobbed.is-active, .blunt-ibtn.is-blobbed.is-active,
+.blunt-btn.is-blobbed.is-active:hover, .blunt-ibtn.is-blobbed.is-active:hover { background: transparent; color: #fff; }
+.blunt-ibtn.is-blobbed.is-dim, .blunt-ibtn.is-blobbed.is-dim.is-active { color: rgba(255, 255, 255, .4); }
+.blunt-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.blunt-btn svg { display: block; pointer-events: none; }
+
+.blunt-btn::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .12s;
+}
+.blunt-btn:hover::after { opacity: 1; }
+.blunt-toolbar.is-vertical .blunt-btn::after {
+  bottom: auto;
+  top: 50%;
+  left: calc(100% + 12px);
+  transform: translateY(-50%);
+}
+
+.blunt-divider { width: 1px; height: 24px; margin: 0 4px; background: rgba(255, 255, 255, .2); }
+.blunt-toolbar.is-vertical .blunt-divider { width: 24px; height: 1px; margin: 4px 0; }
+
+.blunt-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff5a36;
+  display: none;
+}
+.blunt-toolbar.is-dirty .blunt-dot { display: block; }
+
+/* Selection: an Illustrator-style bounding box in the toolbar's black and white.
+   The white halo keeps every line readable on dark backgrounds too. */
+.blunt-overlay, .blunt-hover-layer { position: fixed; inset: 0; pointer-events: none; }
+.blunt-overlay { z-index: 2147483645; }
+.blunt-hover-layer { z-index: 2147483644; }
+.blunt-overlay[hidden], .blunt-hover-layer[hidden] { display: none; }
+
+.blunt-box {
+  position: absolute;
+  border: 1px solid #1a1a1a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .9);
+}
+
+.blunt-handle {
+  position: absolute;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  border: 1.5px solid #1a1a1a;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .9);
+  touch-action: none;
+  transition: transform .1s, background-color .1s;
+}
+
+/* Spacing handles: small squares on the edge midpoints */
+.blunt-edge { width: 9px; height: 9px; border-radius: 2px; }
+.blunt-edge:hover, .blunt-edge.is-active { background: #1a1a1a; }
+.blunt-edge-top { left: 50%; top: 0; cursor: ns-resize; }
+.blunt-edge-bottom { left: 50%; top: 100%; cursor: ns-resize; }
+.blunt-edge-left { left: 0; top: 50%; cursor: ew-resize; }
+.blunt-edge-right { left: 100%; top: 50%; cursor: ew-resize; }
+
+/* Radius handles: Illustrator "live corner" widgets — a ring with a dot */
+.blunt-corner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1a1a1a 0 2px, #fff 2.5px);
+  cursor: crosshair;
+}
+.blunt-corner:hover, .blunt-corner.is-active {
+  transform: translate(-50%, -50%) scale(1.25);
+  background: radial-gradient(circle, #fff 0 2px, #1a1a1a 2.5px);
+}
+
+/* Hover hint: dashed outline that follows the element's shape */
+.blunt-hover {
+  position: absolute;
+  border: 1px dashed #1a1a1a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .7);
+}
+
+/* Name tags. Hover = black pill, selection = white pill (like the active toolbar button). */
+.blunt-tag {
+  position: absolute;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+}
+.blunt-ui .blunt-tag { font-size: 11px; font-weight: 600; }
+.blunt-tag.is-blocked { background: #b3261e; }
+.blunt-tag-selected { border: 1px solid #1a1a1a; background: #fff; color: #1a1a1a; }
+
+/* Per-tool cursor on the page (set by hover.js); editor UI keeps its own cursors */
+html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cursor, default) !important; }
+
+.blunt-readout {
+  position: fixed;
+  z-index: 2147483647;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.blunt-readout[hidden] { display: none; }
+
+/* Shared controls — same language as the toolbar: #1a1a1a surfaces, pills, round buttons, white = active */
+.blunt-input {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+  transition: background-color .15s, color .15s;
+}
+.blunt-input:focus { outline: none; background: #fff; color: #1a1a1a; }
+.blunt-input:disabled { opacity: .4; }
+.blunt-ui .blunt-note { margin: 0; color: rgba(255, 255, 255, .5); font-size: 11px; line-height: 1.45; }
+
+/* Round icon buttons (panel tabs, icon groups) — mirrors .blunt-btn */
+.blunt-ibtn {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color .15s, color .15s, opacity .15s;
+}
+.blunt-ibtn svg { display: block; pointer-events: none; }
+.blunt-ibtn:hover { background: rgba(255, 255, 255, .12); }
+.blunt-ibtn.is-active { background: #fff; color: #1a1a1a; }
+.blunt-ibtn.is-dim { color: rgba(255, 255, 255, .35); }
+.blunt-ibtn.is-dim.is-active { color: rgba(26, 26, 26, .45); }
+.blunt-ibtn:disabled { opacity: .3; cursor: default; background: transparent; }
+.blunt-ibtn:focus-visible, .blunt-pill:focus-visible, .blunt-swatch:focus-visible, .blunt-segtext:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.blunt-ibtn.is-sm { width: 32px; height: 32px; }
+.blunt-ibtn.is-sm svg { width: 18px; height: 18px; }
+
+/* Icon group: a pill track with round buttons, like a mini toolbar */
+.blunt-iseg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  justify-content: space-between;
+  padding: 3px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .08);
+}
+.blunt-iseg.is-set { box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .7); }
+.blunt-iseg.is-text { flex-wrap: nowrap; }
+.blunt-segtext {
+  flex: 1;
+  margin: 0;
+  padding: 7px 4px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+.blunt-segtext:hover { background: rgba(255, 255, 255, .12); }
+.blunt-segtext.is-active { background: #fff; color: #1a1a1a; }
+
+.blunt-pill {
+  width: 100%;
+  margin: 0;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+.blunt-pill:hover { background: rgba(255, 255, 255, .14); }
+.blunt-pill.is-active { background: #fff; color: #1a1a1a; }
+.blunt-pill:disabled { opacity: .35; cursor: default; }
+
+/* Colour dots: round, with a white ring like the toolbar's active circle */
+.blunt-swatch {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #1a1a1a, 0 0 0 3.5px rgba(255, 255, 255, .55);
+  cursor: pointer;
+  transition: transform .1s, box-shadow .15s;
+}
+.blunt-swatch:hover { transform: scale(1.1); box-shadow: 0 0 0 2px #1a1a1a, 0 0 0 3.5px #fff; }
+.blunt-swatch.is-lg { width: 28px; height: 28px; margin: 3.5px; }
+.blunt-swatch.is-empty { background: linear-gradient(135deg, transparent 45%, #ff5a36 45%, #ff5a36 55%, transparent 55%), #fff !important; }
+.blunt-swatch:disabled { opacity: .35; cursor: default; transform: none; }
+.blunt-colourrow { display: flex; gap: 10px; align-items: center; }
+
+/* Link popover (Text tool) */
+.blunt-popover {
+  position: fixed;
+  z-index: 2147483647;
+  display: grid;
+  gap: 8px;
+  width: 260px;
+  padding: 12px;
+  border-radius: 24px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+.blunt-popover[hidden] { display: none; }
+.blunt-field { display: grid; gap: 6px; padding-left: 4px; }
+
+/* Floating tooltip — the same pill as the toolbar's hover labels */
+.blunt-tooltip {
+  position: fixed;
+  z-index: 2147483647;
+  max-width: 240px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .15), 0 4px 12px rgba(0, 0, 0, .25);
+  pointer-events: none;
+}
+.blunt-tooltip[hidden] { display: none; }
+
+/* Inspector panel */
+.blunt-panel {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 2147483646;
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+  border-radius: 26px; /* bar padding (6px) + half a tab button (20px): corners hug the buttons like the toolbar */
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+.blunt-panel-bar {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+  padding: 6px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.blunt-panel-bar .blunt-divider { margin: 0 6px; }
+.blunt-panel-name {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 2px 16px 12px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.blunt-ui .blunt-name { min-width: 0; overflow: hidden; font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.blunt-ui .blunt-size { flex: none; margin-left: auto; color: rgba(255, 255, 255, .5); font-size: 12px; font-variant-numeric: tabular-nums; }
+.blunt-panel-name.is-empty .blunt-name { color: rgba(255, 255, 255, .5); font-weight: 500; }
+.blunt-panel.is-collapsed .blunt-panel-body { display: none; }
+
+.blunt-panel-body {
+  display: grid;
+  gap: 16px;
+  padding: 4px 14px 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .25) transparent;
+}
+.blunt-row { display: grid; gap: 8px; }
+.blunt-ui .blunt-row-label { padding-left: 4px; color: rgba(255, 255, 255, .55); font-size: 12px; }
+.blunt-quad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+
+/* Number pills */
+.blunt-num {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 7px 4px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  cursor: ew-resize;
+  transition: background-color .15s, color .15s;
+}
+.blunt-num:hover { background: rgba(255, 255, 255, .14); }
+.blunt-num:focus { outline: none; background: #fff; color: #1a1a1a; cursor: text; }
+.blunt-num:disabled { opacity: .35; cursor: default; background: rgba(255, 255, 255, .05); }
+.blunt-num.is-set, .blunt-input.is-set { box-shadow: inset 0 0 0 1.5px #fff; }
+.blunt-num.has-token, .blunt-input.has-token { text-decoration: underline dotted rgba(255, 255, 255, .8); text-underline-offset: 3px; }
+
+/* Box model diagram: nested rounded shapes, lighter towards the content */
+.blunt-ring {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px 1fr 34px;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  justify-items: center;
+  gap: 0;
+  padding: 2px 3px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .05);
+}
+.blunt-ring.is-border { border-radius: 18px; background: rgba(255, 255, 255, .07); }
+.blunt-ring.is-padding { border-radius: 14px; background: rgba(255, 255, 255, .09); }
+/* The ring's name shares the line with its top value, so the diagram stays short */
+.blunt-ui .blunt-ring-label { position: absolute; top: 7px; left: 12px; color: rgba(255, 255, 255, .45); font-size: 10px; line-height: 12px; }
+.blunt-cell-top { grid-column: 2; grid-row: 1; }
+.blunt-cell-right { grid-column: 3; grid-row: 2; }
+.blunt-cell-bottom { grid-column: 2; grid-row: 3; }
+.blunt-cell-left { grid-column: 1; grid-row: 2; }
+.blunt-cell-inner { grid-column: 2; grid-row: 2; justify-self: stretch; }
+.blunt-ring .blunt-num { width: 34px; padding: 3px 0; background: transparent; }
+.blunt-ring .blunt-num:hover { background: rgba(255, 255, 255, .12); }
+.blunt-ring .blunt-num:focus { background: #fff; }
+.blunt-ui .blunt-content { margin: 2px 0; padding: 6px 2px; white-space: nowrap; border-radius: 999px; background: #fff; color: #1a1a1a; font-size: 11px; font-weight: 600; text-align: center; }
+
+/* Paint popup (Fill tool) — floats above the toolbar */
+.blunt-paintpop {
+  position: fixed;
+  z-index: 2147483646;
+  display: grid;
+  gap: 8px;
+  width: 280px;
+  padding: 8px 10px 12px;
+  border-radius: 26px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+.blunt-paintpop[hidden] { display: none; }
+.blunt-paintpop .blunt-note { padding: 0 4px; }
+
+/* Colour picker */
+.blunt-picker {
+  position: fixed;
+  z-index: 2147483647;
+  display: grid;
+  gap: 12px;
+  width: 236px;
+  padding: 12px;
+  border-radius: 28px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+}
+.blunt-picker[hidden] { display: none; }
+.blunt-sv {
+  position: relative;
+  height: 148px;
+  border-radius: 18px;
+  background-image: linear-gradient(to top, #000, rgba(0, 0, 0, 0)), linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+  cursor: crosshair;
+  touch-action: none;
+}
+.blunt-hue {
+  position: relative;
+  height: 14px;
+  margin: 0 7px;
+  border-radius: 999px;
+  background: linear-gradient(to right, #f00, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00);
+  cursor: ew-resize;
+  touch-action: none;
+}
+/* Ring thumbs — the same widget as the radius dots on the canvas */
+.blunt-thumb {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2.5px #fff, 0 0 0 4px rgba(0, 0, 0, .35);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.blunt-hue .blunt-thumb { top: 50%; }
+.blunt-picker-line { display: flex; gap: 10px; align-items: center; padding-left: 3.5px; }
+.blunt-swatches { display: flex; flex-wrap: wrap; gap: 10px; padding: 2px 4px 4px; }
+.blunt-swatches[hidden] { display: none; }
+
+/* Toasts */
+.blunt-toasts {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+}
+.blunt-toast { padding: 10px 16px; border-radius: 999px; background: #1a1a1a; color: #fff; }
+.blunt-toast.is-error { border-radius: 16px; background: #b3261e; }
+
+/* Page hints while editing */
+.blunt-editing { outline: 2px solid #1a1a1a !important; outline-offset: 3px; box-shadow: 0 0 0 5px rgba(255, 255, 255, .9) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .blunt-ui, .blunt-ui * { transition: none !important; }
+}

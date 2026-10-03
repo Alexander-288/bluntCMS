@@ -1,0 +1,41 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: 17px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+
+nav { display: flex; gap: 16px; padding: 20px 0; }
+nav a { color: inherit; }
+
+.hero { padding: 64px 0 48px; }
+.hero h1 { margin: 0 0 12px; font-size: clamp(36px, 6vw, 64px); line-height: 1.05; }
+.hero p { max-width: 36em; margin: 0 0 24px; }
+
+.button {
+  display: inline-block;
+  padding: 12px 22px;
+  border-radius: var(--button-radius);
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--gap);
+  padding-bottom: 64px;
+}
+
+.card {
+  padding: var(--gap);
+  border-radius: var(--card-radius);
+  background: #fff;
+}
+.card h2 { margin: 0 0 8px; font-size: 20px; }
+.card p { margin: 0; }

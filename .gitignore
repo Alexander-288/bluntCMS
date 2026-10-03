@@ -28,3 +28,11 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# BluntCMS runtime (per-install, never committed)
+blunt/config.php
+blunt/data/*
+!blunt/data/.htaccess
+blunt/backups/*
+!blunt/backups/.htaccess
+*.blunt-tmp

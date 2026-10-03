@@ -1,6 +1,6 @@
 # Architecture
 
-*Status: planned for BluntCMS Light. Not built yet.*
+*BluntCMS Light*
 
 ## Principles
 
@@ -10,7 +10,7 @@
 
 ## Requirements
 
-- **PHP 8.1 or newer** on the server. Works on 8.2, 8.3 and 8.4 too.
+- **PHP 8.1 or newer** on the server. Written for 8.1, tested on 8.5.
 - No extra PHP extensions beyond the defaults.
 
 ## Files
@@ -19,15 +19,16 @@
 blunt/
   config.php      password hash and token CSS file path (made by setup.php)
   setup.php       first run: set the password, then it locks itself
-  login.php       login form and session start
+  login.php       login form, lockout, logout
   edit.php        auth check, loads the page, injects the editor, rewrites links
   save.php        receives changes as JSON, writes them into the files
-  lib.php         shared helpers: auth check, safe paths, CSRF
-  editor.js       toolbar, selection box, drag handles, text editing
+  lib.php         loads everything in lib/
+  lib/            scanner, edits, tokens, validation, paths, auth, backups
   editor.css      toolbar and handle styling
+  js/             editor: core, tokens, toolbar, overlay, hover, text, fill, picker, panel, main
   backups/        previous versions of each file
   data/           runtime state, like the login lockout
-  .htaccess       blocks direct access to config, data and backups
+  .htaccess       blocks direct access to config, lib, data and backups
 ```
 
 ## Where changes are saved
@@ -40,7 +41,7 @@ blunt/
 
 Only the changed characters are rewritten. Everything else in your file stays **byte-for-byte identical** — indentation, quotes, comments, line breaks. A one-word change is a one-word diff.
 
-A small scanner in `lib.php` finds the exact position of each element's opening tag and text in the file and replaces just those characters. PHP's `DOMDocument` is *not* used for writing, because it re-outputs and reformats the whole file.
+A small scanner in `lib/scanner.php` finds the exact position of each element's opening tag and text in the file and replaces just those characters. PHP's `DOMDocument` is *not* used for writing, because it re-outputs and reformats the whole file.
 
 ### How elements are matched
 
@@ -67,7 +68,8 @@ The editor sends a fingerprint of the file as it was when opened. If the file ch
 
 - Every save needs a **CSRF token** from the session
 - Any `.html` file inside the site folder can be edited — nothing outside it, nothing inside `blunt/`, no `../` tricks
-- **Allowlisted styles only** — `border-radius` and the four single-corner radii, `padding-*`, `margin-*`, `color`, `background-color`, `border-color`, with plain values like `12px`, `1.5rem`, `#ff0000`
+- **Allowlisted styles only** — radius (all or per corner), `padding-*`, `margin-*` (`auto` allowed on left and right), border widths, `border-style`, colours, `text-align`, `justify-content`, `align-items` and `gap`. Values must be plain sizes like `12px` or `1.5rem`, hex colours like `#ff0000`, or one of a fixed list of keywords
+- Position, size, z-index and display are rejected — they belong to BluntCMS Thick
 - **Text is escaped** — typing `<script>` saves as literal text
 - Links starting with `javascript:` are rejected
 - Files are written to a temp file first, then swapped in, so a crash can't leave half a file
