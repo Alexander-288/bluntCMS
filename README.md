@@ -53,7 +53,7 @@ BluntCMS ships in tiers. Each tier builds on the one before it.
 - **BluntCMS Light** — *the base of everything.* Text, links and style editing. Single admin. **This is what is being built now.**
 - **BluntCMS Thick** — Light plus *image uploads and swapping*.
 - **BluntCMS Co-op** — *idea stage.* Possibly multiple users.
-- **FattCMS** — *the fat cousin.* A separate, heavier project for everything that doesn't belong in Blunt.
+- **FattCMS** — *the fat cousin.* A separate, heavier project for everything that doesn't belong in Blunt. **Not yet avaialble**
 
 Names beyond Light are not final.
 
