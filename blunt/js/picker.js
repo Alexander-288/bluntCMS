@@ -190,12 +190,24 @@
     fillSwatches();
     pop.hidden = false;
     const r = anchor.getBoundingClientRect();
-    const panel = anchor.closest('.blunt-panel');
-    const side = panel ? panel.getBoundingClientRect() : r;
-    let left = side.left - pop.offsetWidth - 10;
-    if (left < 8) left = side.right + 10;
-    pop.style.left = `${Math.min(left, window.innerWidth - pop.offsetWidth - 8)}px`;
-    pop.style.top = `${Math.min(Math.max(8, r.top - 16), window.innerHeight - pop.offsetHeight - 8)}px`;
+    const fit = (v, size, max) => Math.min(Math.max(8, v), max - size - 8);
+    const paintPop = anchor.closest('.blunt-paintpop');
+    if (paintPop) {
+      // Above the paint popup (below it if there's no room), lined up with its left edge.
+      const p = paintPop.getBoundingClientRect();
+      let top = p.top - pop.offsetHeight - 10;
+      if (top < 8) top = p.bottom + 10;
+      pop.style.left = `${fit(p.left, pop.offsetWidth, window.innerWidth)}px`;
+      pop.style.top = `${fit(top, pop.offsetHeight, window.innerHeight)}px`;
+    } else {
+      // Beside the inspector panel: left of it, or right of it near the left edge.
+      const panel = anchor.closest('.blunt-panel');
+      const side = panel ? panel.getBoundingClientRect() : r;
+      let left = side.left - pop.offsetWidth - 10;
+      if (left < 8) left = side.right + 10;
+      pop.style.left = `${fit(left, pop.offsetWidth, window.innerWidth)}px`;
+      pop.style.top = `${fit(r.top - 16, pop.offsetHeight, window.innerHeight)}px`;
+    }
   };
   B.closePicker = close;
 

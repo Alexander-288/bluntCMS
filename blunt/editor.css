@@ -310,7 +310,7 @@ html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cu
   width: 284px;
   max-height: calc(100vh - 32px);
   overflow: hidden;
-  border-radius: 28px;
+  border-radius: 26px; /* bar padding (6px) + half a tab button (20px): corners hug the buttons like the toolbar */
   background: #1a1a1a;
   color: #fff;
   box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
@@ -318,6 +318,7 @@ html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cu
 .blunt-panel-bar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 2px;
   padding: 6px;
   cursor: grab;
@@ -337,8 +338,7 @@ html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cu
 .blunt-ui .blunt-name { min-width: 0; overflow: hidden; font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 .blunt-ui .blunt-size { flex: none; margin-left: auto; color: rgba(255, 255, 255, .5); font-size: 12px; font-variant-numeric: tabular-nums; }
 .blunt-panel-name.is-empty .blunt-name { color: rgba(255, 255, 255, .5); font-weight: 500; }
-.blunt-panel.is-collapsed .blunt-panel-body,
-.blunt-panel.is-collapsed .blunt-paint { display: none; }
+.blunt-panel.is-collapsed .blunt-panel-body { display: none; }
 
 .blunt-panel-body {
   display: grid;
@@ -401,9 +401,21 @@ html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cu
 .blunt-ring .blunt-num:focus { background: #fff; }
 .blunt-ui .blunt-content { padding: 9px 4px; border-radius: 999px; background: #fff; color: #1a1a1a; font-size: 11px; font-weight: 600; text-align: center; }
 
-/* Paint colour (Fill tool) */
-.blunt-paint { display: grid; gap: 8px; margin: 0 8px 10px; padding: 10px 10px 12px; border-radius: 22px; background: rgba(255, 255, 255, .06); }
-.blunt-paint[hidden] { display: none; }
+/* Paint popup (Fill tool) — floats above the toolbar */
+.blunt-paintpop {
+  position: fixed;
+  z-index: 2147483646;
+  display: grid;
+  gap: 8px;
+  width: 280px;
+  padding: 8px 10px 12px;
+  border-radius: 26px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+.blunt-paintpop[hidden] { display: none; }
+.blunt-paintpop .blunt-note { padding: 0 4px; }
 
 /* Colour picker */
 .blunt-picker {

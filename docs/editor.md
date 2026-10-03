@@ -90,7 +90,7 @@ A dark panel in the same style as the toolbar. It is always open and always show
 - A **dimmed tab icon** means the selected element has nothing set in that tab yet — you can still open it and add something
 - The **diamond** button edits shared tokens instead of the element. Holding `Shift` does the same for one drag or click
 - Under the icons: the selected element's name and size
-- **Drag** the icon bar or name to move the panel, **double-click** to collapse it — it remembers both
+- **Drag** the icon bar or name to move the panel, **double-click** to collapse it — it remembers both. It always stays on screen; dragged low, it gets shorter and scrolls
 - A **white ring** on a field means the value is set on this element itself
 - A **dotted underline** means the value comes from a token you can edit
 
@@ -120,7 +120,7 @@ Position, size, z-index and display are not in Light. They are planned for **Blu
 
 ## Fill
 
-A paint bucket. While Fill is active, the panel shows the **paint colour** dot and a target: *Background*, *Text* or *Border*.
+A paint bucket. While Fill is active, a small popup above the toolbar shows the **paint colour** dot and a target: *Background*, *Text* or *Border*.
 
 - **Click** an element to paint it
 - **Alt + click** picks up an element's colour

@@ -1,4 +1,4 @@
-/* BluntCMS Light — inspector panel in the toolbar's style: icon tabs, a fixed skeleton layout, the paint colour. */
+/* BluntCMS Light — inspector panel in the toolbar's style: icon tabs and a fixed skeleton layout. */
 (() => {
   'use strict';
 
@@ -63,7 +63,7 @@
   const tip = B.mk('div', 'blunt-ui blunt-tooltip', document.body);
   tip.hidden = true;
   document.addEventListener('pointerover', (e) => {
-    const t = e.target.closest && e.target.closest('.blunt-panel [data-tip], .blunt-picker [data-tip]');
+    const t = e.target.closest && e.target.closest('.blunt-panel [data-tip], .blunt-picker [data-tip], .blunt-paintpop [data-tip]');
     if (!t) {
       tip.hidden = true;
       return;
@@ -79,7 +79,7 @@
     tip.hidden = true;
   }, true);
 
-  // ---- Shell: icon bar, name line, paint, body ----
+  // ---- Shell: icon bar, name line, body ----
   const panel = B.mk('aside', 'blunt-ui blunt-panel', document.body);
   panel.setAttribute('aria-label', 'Inspector');
   const bar = B.mk('div', 'blunt-panel-bar', panel);
@@ -118,18 +118,24 @@
   const nameLine = B.mk('div', 'blunt-panel-name', panel);
   const nameText = B.mk('span', 'blunt-name', nameLine);
   const sizeText = B.mk('span', 'blunt-size', nameLine);
-  const paintBox = B.mk('div', 'blunt-paint', panel);
   const body = B.mk('div', 'blunt-panel-body', panel);
   body.setAttribute('role', 'tabpanel');
 
   // ---- Drag (anywhere on the bar or name line), double-click to collapse ----
   const clamp = (v, max) => Math.min(Math.max(0, v), Math.max(0, max));
+  const MARGIN = 8;
+  /** Keeps the whole panel on screen: clamps the position and shortens the panel (body scrolls) when it sits low. */
   const applyState = () => {
     panel.classList.toggle('is-collapsed', !!state.collapsed);
-    if (state.x == null) return;
-    panel.style.left = `${clamp(state.x, window.innerWidth - panel.offsetWidth)}px`;
-    panel.style.top = `${clamp(state.y, window.innerHeight - 56)}px`;
-    panel.style.right = 'auto';
+    const headH = bar.offsetHeight + nameLine.offsetHeight;
+    let top = 16;
+    if (state.x != null) {
+      panel.style.left = `${Math.max(MARGIN, clamp(state.x, window.innerWidth - panel.offsetWidth - MARGIN))}px`;
+      top = Math.max(MARGIN, clamp(state.y, window.innerHeight - headH - MARGIN));
+      panel.style.top = `${top}px`;
+      panel.style.right = 'auto';
+    }
+    panel.style.maxHeight = `${window.innerHeight - top - MARGIN}px`;
   };
   applyState();
   window.addEventListener('resize', applyState);
@@ -586,61 +592,6 @@
     }
   }
 
-  // ---- Paint colour (Fill tool) ----
-  function renderPaint() {
-    paintBox.replaceChildren();
-    paintBox.hidden = B.tool !== 'fill';
-    if (paintBox.hidden) return;
-    const r = row(paintBox, 'Paint');
-    const line = B.mk('div', 'blunt-colourrow', r);
-    const dot = B.mk('button', 'blunt-swatch is-lg', line);
-    dot.type = 'button';
-    dot.style.background = B.paint.color;
-    dot.dataset.tip = 'Pick paint colour';
-    dot.setAttribute('aria-label', 'Pick paint colour');
-    const hex = B.mk('input', 'blunt-input', line);
-    hex.type = 'text';
-    hex.maxLength = 9;
-    hex.value = B.paint.color;
-    hex.setAttribute('aria-label', 'Paint hex');
-    const before = B.paint.color;
-    dot.addEventListener('click', () => {
-      B.openPicker(dot, B.paint.color, {
-        onInput: (c) => {
-          B.paint.color = c;
-          dot.style.background = c;
-          hex.value = c;
-        },
-        onDone: (c) => {
-          B.paint.color = c || before;
-          renderPaint();
-        },
-      });
-    });
-    hex.addEventListener('change', () => {
-      const v = hex.value.trim().toLowerCase();
-      if (!HEX.test(v)) {
-        B.toast('Use a hex colour like #1a1a1a.', 'error');
-        hex.value = B.paint.color;
-        return;
-      }
-      B.paint.color = v;
-      dot.style.background = v;
-    });
-    const seg = B.mk('div', 'blunt-iseg is-text', r);
-    for (const [label, prop] of [['Background', 'background-color'], ['Text', 'color'], ['Border', 'border-color']]) {
-      const b = B.mk('button', 'blunt-segtext', seg);
-      b.type = 'button';
-      b.textContent = label;
-      b.classList.toggle('is-active', B.paint.prop === prop);
-      b.addEventListener('click', () => {
-        B.paint.prop = prop;
-        renderPaint();
-      });
-    }
-    note(paintBox, 'Click paints · Alt-click picks a colour · Shift-click paints the token');
-  }
-
   // ---- Render ----
   function render() {
     updaters = [];
@@ -653,8 +604,5 @@
   B.on('select', render);
   B.on('change', refresh);
   B.on('live', refresh);
-  B.on('tool', renderPaint);
-  B.on('paint', renderPaint);
   render();
-  renderPaint();
 })();
