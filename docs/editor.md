@@ -84,12 +84,23 @@ A marked link also shows a small popover with an `href` field.
 
 ## Inspector panel
 
-A dark panel shows every style BluntCMS can edit for the selected element. It is always open.
+A dark panel in the same style as the toolbar. It is always open and always shows the same layout — fields that don't apply are dimmed instead of hidden.
 
-- **Drag** its header to move it, **double-click** the header to collapse it — it remembers both
-- **Tokens** button — while on, edits go to the shared token instead of the element. Holding `Shift` does the same for one drag or click
-- A **white outline** on a field means the value is set on this element itself
+- The **icon bar** at the top switches tabs: *Box*, *Border*, *Colour*, *Layout*. Hover an icon for its name
+- A **dimmed tab icon** means the selected element has nothing set in that tab yet — you can still open it and add something
+- The **diamond** button edits shared tokens instead of the element. Holding `Shift` does the same for one drag or click
+- Under the icons: the selected element's name and size
+- **Drag** the icon bar or name to move the panel, **double-click** to collapse it — it remembers both
+- A **white ring** on a field means the value is set on this element itself
 - A **dotted underline** means the value comes from a token you can edit
+
+### Colours
+
+Colour dots open the colour picker:
+
+- Drag in the shade area and along the hue slider, or type a hex value
+- Dots below are your token colours and recent picks — click one to use it
+- Click outside to apply, `Esc` to cancel
 
 ### Number fields
 
@@ -101,15 +112,15 @@ A dark panel shows every style BluntCMS can edit for the selected element. It is
 ### Tabs
 
 - **Box** — a margin, border and padding diagram with all four sides of each
-- **Border** — style (*none*, *solid*, *dashed*, *dotted*), width for all sides or each side, colour, radius for all corners or each corner
+- **Border** — style (none, solid, dashed, dotted), width for all sides or each side, colour, radius for all corners or each corner
 - **Colour** — text, background and border colour
-- **Layout** — text alignment, *Centre in parent*, and for flex or grid containers: justify, align and gap
+- **Layout** — text alignment, *Centre in parent*, and justify, align and gap — those three only work on flex and grid containers
 
 Position, size, z-index and display are not in Light. They are planned for **BluntCMS Thick**.
 
 ## Fill
 
-A paint bucket. Set the **paint colour** and target (*background*, *text* or *border*) at the top of the panel.
+A paint bucket. While Fill is active, the panel shows the **paint colour** dot and a target: *Background*, *Text* or *Border*.
 
 - **Click** an element to paint it
 - **Alt + click** picks up an element's colour

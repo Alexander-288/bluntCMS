@@ -167,47 +167,137 @@ html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cu
 }
 .blunt-readout[hidden] { display: none; }
 
-/* Popovers (link, fill) */
-.blunt-popover {
-  position: fixed;
-  z-index: 2147483647;
-  display: grid;
-  gap: 8px;
-  width: 240px;
-  padding: 12px;
-  border-radius: 18px;
-  background: #1a1a1a;
-  color: #fff;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
-}
-.blunt-popover[hidden] { display: none; }
-.blunt-field { display: grid; gap: 6px; }
+/* Shared controls — same language as the toolbar: #1a1a1a surfaces, pills, round buttons, white = active */
 .blunt-input {
   width: 100%;
+  min-width: 0;
   margin: 0;
-  padding: 8px 10px;
-  border: 1px solid rgba(255, 255, 255, .2);
-  border-radius: 10px;
-  background: #000;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
   color: #fff;
+  transition: background-color .15s, color .15s;
 }
-.blunt-seg { display: flex; gap: 2px; padding: 2px; border-radius: 999px; background: #000; }
-.blunt-seg button {
+.blunt-input:focus { outline: none; background: #fff; color: #1a1a1a; }
+.blunt-input:disabled { opacity: .4; }
+.blunt-ui .blunt-note { margin: 0; color: rgba(255, 255, 255, .5); font-size: 11px; line-height: 1.45; }
+
+/* Round icon buttons (panel tabs, icon groups) — mirrors .blunt-btn */
+.blunt-ibtn {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color .15s, color .15s, opacity .15s;
+}
+.blunt-ibtn svg { display: block; pointer-events: none; }
+.blunt-ibtn:hover { background: rgba(255, 255, 255, .12); }
+.blunt-ibtn.is-active { background: #fff; color: #1a1a1a; }
+.blunt-ibtn.is-dim { color: rgba(255, 255, 255, .35); }
+.blunt-ibtn.is-dim.is-active { color: rgba(26, 26, 26, .45); }
+.blunt-ibtn:disabled { opacity: .3; cursor: default; background: transparent; }
+.blunt-ibtn:focus-visible, .blunt-pill:focus-visible, .blunt-swatch:focus-visible, .blunt-segtext:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.blunt-ibtn.is-sm { width: 32px; height: 32px; }
+.blunt-ibtn.is-sm svg { width: 18px; height: 18px; }
+
+/* Icon group: a pill track with round buttons, like a mini toolbar */
+.blunt-iseg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  justify-content: space-between;
+  padding: 3px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .08);
+}
+.blunt-iseg.is-set { box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .7); }
+.blunt-iseg.is-text { flex-wrap: nowrap; }
+.blunt-segtext {
   flex: 1;
   margin: 0;
-  padding: 6px 8px;
+  padding: 7px 4px;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: #fff;
   cursor: pointer;
 }
-.blunt-seg button.is-active { background: #fff; color: #1a1a1a; }
-.blunt-seg.is-set { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .6); }
-.blunt-seg-sm { flex-wrap: wrap; border-radius: 12px; }
-.blunt-seg-sm button { padding: 5px 6px; border-radius: 10px; }
-.blunt-color { display: block; width: 100%; height: 36px; margin: 0; padding: 0; border: 0; border-radius: 10px; background: none; cursor: pointer; }
-.blunt-ui .blunt-note { margin: 0; color: rgba(255, 255, 255, .55); font-size: 11px; line-height: 1.4; }
+.blunt-segtext:hover { background: rgba(255, 255, 255, .12); }
+.blunt-segtext.is-active { background: #fff; color: #1a1a1a; }
+
+.blunt-pill {
+  width: 100%;
+  margin: 0;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+.blunt-pill:hover { background: rgba(255, 255, 255, .14); }
+.blunt-pill.is-active { background: #fff; color: #1a1a1a; }
+.blunt-pill:disabled { opacity: .35; cursor: default; }
+
+/* Colour dots: round, with a white ring like the toolbar's active circle */
+.blunt-swatch {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #1a1a1a, 0 0 0 3.5px rgba(255, 255, 255, .55);
+  cursor: pointer;
+  transition: transform .1s, box-shadow .15s;
+}
+.blunt-swatch:hover { transform: scale(1.1); box-shadow: 0 0 0 2px #1a1a1a, 0 0 0 3.5px #fff; }
+.blunt-swatch.is-lg { width: 28px; height: 28px; margin: 3.5px; }
+.blunt-swatch.is-empty { background: linear-gradient(135deg, transparent 45%, #ff5a36 45%, #ff5a36 55%, transparent 55%), #fff !important; }
+.blunt-swatch:disabled { opacity: .35; cursor: default; transform: none; }
+.blunt-colourrow { display: flex; gap: 10px; align-items: center; }
+
+/* Link popover (Text tool) */
+.blunt-popover {
+  position: fixed;
+  z-index: 2147483647;
+  display: grid;
+  gap: 8px;
+  width: 260px;
+  padding: 12px;
+  border-radius: 24px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+.blunt-popover[hidden] { display: none; }
+.blunt-field { display: grid; gap: 6px; padding-left: 4px; }
+
+/* Floating tooltip — the same pill as the toolbar's hover labels */
+.blunt-tooltip {
+  position: fixed;
+  z-index: 2147483647;
+  max-width: 240px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .15), 0 4px 12px rgba(0, 0, 0, .25);
+  pointer-events: none;
+}
+.blunt-tooltip[hidden] { display: none; }
 
 /* Inspector panel */
 .blunt-panel {
@@ -217,100 +307,149 @@ html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cu
   z-index: 2147483646;
   display: flex;
   flex-direction: column;
-  width: 288px;
+  width: 284px;
   max-height: calc(100vh - 32px);
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: 28px;
   background: #1a1a1a;
   color: #fff;
   box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
 }
-.blunt-panel.is-collapsed .blunt-tabs,
-.blunt-panel.is-collapsed .blunt-panel-body,
-.blunt-panel.is-collapsed .blunt-paint { display: none; }
-.blunt-panel-head {
+.blunt-panel-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 12px 10px 16px;
+  gap: 2px;
+  padding: 6px;
   cursor: grab;
   user-select: none;
   touch-action: none;
 }
-.blunt-ui .blunt-panel-title { flex: 1; min-width: 0; overflow: hidden; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
-.blunt-chip {
-  margin: 0;
-  padding: 5px 11px;
-  border: 1px solid rgba(255, 255, 255, .25);
-  border-radius: 999px;
-  background: transparent;
-  color: #fff;
-  cursor: pointer;
+.blunt-panel-bar .blunt-divider { margin: 0 6px; }
+.blunt-panel-name {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 2px 16px 12px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
 }
-.blunt-chip:hover { border-color: #fff; }
-.blunt-chip.is-active { border-color: #fff; background: #fff; color: #1a1a1a; }
-.blunt-chip:focus-visible, .blunt-seg button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-.blunt-wide { width: 100%; }
-.blunt-tabs { margin: 0 12px 10px; }
+.blunt-ui .blunt-name { min-width: 0; overflow: hidden; font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.blunt-ui .blunt-size { flex: none; margin-left: auto; color: rgba(255, 255, 255, .5); font-size: 12px; font-variant-numeric: tabular-nums; }
+.blunt-panel-name.is-empty .blunt-name { color: rgba(255, 255, 255, .5); font-weight: 500; }
+.blunt-panel.is-collapsed .blunt-panel-body,
+.blunt-panel.is-collapsed .blunt-paint { display: none; }
+
 .blunt-panel-body {
   display: grid;
-  gap: 14px;
-  padding: 2px 12px 14px;
+  gap: 16px;
+  padding: 4px 14px 16px;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .25) transparent;
 }
-.blunt-row { display: grid; gap: 6px; }
-.blunt-ui .blunt-row-label { color: rgba(255, 255, 255, .55); font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.blunt-row { display: grid; gap: 8px; }
+.blunt-ui .blunt-row-label { padding-left: 4px; color: rgba(255, 255, 255, .55); font-size: 12px; }
 .blunt-quad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.blunt-colorrow { display: grid; grid-template-columns: 40px 1fr; gap: 6px; align-items: center; }
-.blunt-colorrow .blunt-color { height: 32px; }
 
+/* Number pills */
 .blunt-num {
   width: 100%;
   min-width: 0;
   margin: 0;
-  padding: 6px 4px;
-  border: 1px solid rgba(255, 255, 255, .15);
-  border-radius: 8px;
-  background: #000;
+  padding: 7px 4px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
   color: #fff;
   text-align: center;
   font-variant-numeric: tabular-nums;
   cursor: ew-resize;
+  transition: background-color .15s, color .15s;
 }
-.blunt-num:focus { outline: 1px solid #fff; cursor: text; }
-.blunt-num.is-set, .blunt-input.is-set { border-color: #fff; }
-.blunt-num.has-token, .blunt-input.has-token { text-decoration: underline dotted rgba(255, 255, 255, .7); text-underline-offset: 3px; }
+.blunt-num:hover { background: rgba(255, 255, 255, .14); }
+.blunt-num:focus { outline: none; background: #fff; color: #1a1a1a; cursor: text; }
+.blunt-num:disabled { opacity: .35; cursor: default; background: rgba(255, 255, 255, .05); }
+.blunt-num.is-set, .blunt-input.is-set { box-shadow: inset 0 0 0 1.5px #fff; }
+.blunt-num.has-token, .blunt-input.has-token { text-decoration: underline dotted rgba(255, 255, 255, .8); text-underline-offset: 3px; }
 
-/* Box model diagram */
+/* Box model diagram: nested rounded shapes, lighter towards the content */
 .blunt-ring {
   position: relative;
   display: grid;
-  grid-template-columns: 30px 1fr 30px;
+  grid-template-columns: 32px 1fr 32px;
   grid-template-rows: auto 1fr auto;
   align-items: center;
   justify-items: center;
   gap: 2px;
-  padding: 16px 2px 2px;
-  border: 1px dashed rgba(255, 255, 255, .3);
-  border-radius: 10px;
+  padding: 18px 3px 3px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .05);
 }
-.blunt-ring.is-border { border-style: solid; border-color: rgba(255, 255, 255, .45); }
-.blunt-ring.is-padding { background: rgba(255, 255, 255, .06); }
-.blunt-ui .blunt-ring-label { position: absolute; top: 3px; left: 8px; color: rgba(255, 255, 255, .5); font-size: 10px; }
+.blunt-ring.is-border { border-radius: 18px; background: rgba(255, 255, 255, .07); }
+.blunt-ring.is-padding { border-radius: 14px; background: rgba(255, 255, 255, .09); }
+.blunt-ui .blunt-ring-label { position: absolute; top: 4px; left: 12px; color: rgba(255, 255, 255, .45); font-size: 10px; }
 .blunt-cell-top { grid-column: 2; grid-row: 1; }
 .blunt-cell-right { grid-column: 3; grid-row: 2; }
 .blunt-cell-bottom { grid-column: 2; grid-row: 3; }
 .blunt-cell-left { grid-column: 1; grid-row: 2; }
 .blunt-cell-inner { grid-column: 2; grid-row: 2; justify-self: stretch; }
-.blunt-ring .blunt-num { width: 30px; padding: 3px 0; border-color: transparent; background: transparent; }
-.blunt-ring .blunt-num.is-set { border-color: rgba(255, 255, 255, .7); }
-.blunt-ui .blunt-content { padding: 10px 4px; border-radius: 6px; background: #fff; color: #1a1a1a; font-size: 11px; text-align: center; }
+.blunt-ring .blunt-num { width: 32px; padding: 4px 0; background: transparent; }
+.blunt-ring .blunt-num:hover { background: rgba(255, 255, 255, .12); }
+.blunt-ring .blunt-num:focus { background: #fff; }
+.blunt-ui .blunt-content { padding: 9px 4px; border-radius: 999px; background: #fff; color: #1a1a1a; font-size: 11px; font-weight: 600; text-align: center; }
 
 /* Paint colour (Fill tool) */
-.blunt-paint { display: grid; gap: 8px; margin: 0 12px 10px; padding: 10px; border-radius: 12px; background: #000; }
+.blunt-paint { display: grid; gap: 8px; margin: 0 8px 10px; padding: 10px 10px 12px; border-radius: 22px; background: rgba(255, 255, 255, .06); }
 .blunt-paint[hidden] { display: none; }
+
+/* Colour picker */
+.blunt-picker {
+  position: fixed;
+  z-index: 2147483647;
+  display: grid;
+  gap: 12px;
+  width: 236px;
+  padding: 12px;
+  border-radius: 28px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+}
+.blunt-picker[hidden] { display: none; }
+.blunt-sv {
+  position: relative;
+  height: 148px;
+  border-radius: 18px;
+  background-image: linear-gradient(to top, #000, rgba(0, 0, 0, 0)), linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+  cursor: crosshair;
+  touch-action: none;
+}
+.blunt-hue {
+  position: relative;
+  height: 14px;
+  margin: 0 7px;
+  border-radius: 999px;
+  background: linear-gradient(to right, #f00, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00);
+  cursor: ew-resize;
+  touch-action: none;
+}
+/* Ring thumbs — the same widget as the radius dots on the canvas */
+.blunt-thumb {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2.5px #fff, 0 0 0 4px rgba(0, 0, 0, .35);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.blunt-hue .blunt-thumb { top: 50%; }
+.blunt-picker-line { display: flex; gap: 10px; align-items: center; padding-left: 3.5px; }
+.blunt-swatches { display: flex; flex-wrap: wrap; gap: 10px; padding: 2px 4px 4px; }
+.blunt-swatches[hidden] { display: none; }
 
 /* Toasts */
 .blunt-toasts {

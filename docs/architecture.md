@@ -25,7 +25,7 @@ blunt/
   lib.php         loads everything in lib/
   lib/            scanner, edits, tokens, validation, paths, auth, backups
   editor.css      toolbar and handle styling
-  js/             editor: core, tokens, toolbar, overlay, hover, text, fill, panel, main
+  js/             editor: core, tokens, toolbar, overlay, hover, text, fill, picker, panel, main
   backups/        previous versions of each file
   data/           runtime state, like the login lockout
   .htaccess       blocks direct access to config, lib, data and backups
