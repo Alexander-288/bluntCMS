@@ -129,13 +129,21 @@
 
   // ---- Height changes animate with a clip-path wipe ----
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  // Negative insets leave room for the shadow on top and sides; the bottom edge is the moving cut, rounded like the panel.
-  const clip = (cut) => `inset(-40px -40px ${Math.max(0, cut)}px -40px round 26px)`;
+  // The sides line up with the panel so the rounded corners land exactly on the moving bottom edge
+  // (wider side insets would put the rounding outside the panel and leave square corners on the cut).
+  // The top is left open so the shadow above isn't clipped.
+  const clip = (cut) => `inset(-40px 0 ${Math.max(0, cut)}px 0 round 26px)`;
   let morphing = null;
 
   /** Runs change(), then wipes the panel open (grow) or closed (shrink) between the old and new height. */
   function morph(change) {
-    if (morphing) morphing.finish();
+    // Stop a running wipe right away (cancel, not finish: finish events fire later, which left the
+    // held height in place and made a quick second switch measure the wrong size and snap).
+    if (morphing) {
+      morphing.cancel();
+      morphing = null;
+    }
+    panel.style.height = '';
     const before = panel.getBoundingClientRect().height;
     change();
     const after = panel.getBoundingClientRect().height;
