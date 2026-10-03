@@ -7,10 +7,21 @@ const BLUNT_STYLE_PROPS = [
     'border-bottom-right-radius', 'border-bottom-left-radius',
     'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
     'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+    'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
+    'gap',
     'color', 'background-color', 'border-color',
+    'border-style', 'text-align', 'justify-content', 'align-items',
 ];
 
 const BLUNT_COLOR_PROPS = ['color', 'background-color', 'border-color'];
+
+/** Properties that only accept one of a fixed set of keywords. */
+const BLUNT_KEYWORD_PROPS = [
+    'border-style' => ['none', 'solid', 'dashed', 'dotted'],
+    'text-align' => ['left', 'center', 'right', 'justify'],
+    'justify-content' => ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'],
+    'align-items' => ['flex-start', 'center', 'flex-end', 'stretch', 'baseline'],
+];
 
 function blunt_is_length(string $v, bool $allowNegative): bool
 {
@@ -33,6 +44,12 @@ function blunt_valid_style(string $prop, string $value): bool
     }
     if (in_array($prop, BLUNT_COLOR_PROPS, true)) {
         return blunt_is_color($value);
+    }
+    if (isset(BLUNT_KEYWORD_PROPS[$prop])) {
+        return in_array($value, BLUNT_KEYWORD_PROPS[$prop], true);
+    }
+    if (($prop === 'margin-left' || $prop === 'margin-right') && $value === 'auto') {
+        return true;
     }
     if ($prop === 'border-radius') {
         $parts = preg_split('/\s+/', trim($value)) ?: [];

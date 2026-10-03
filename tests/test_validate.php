@@ -44,6 +44,50 @@ function test_validate_unknown_property_rejected(): void
     assert_same(false, blunt_valid_style('padding', '4px'));
 }
 
+function test_validate_border_widths_and_gap(): void
+{
+    assert_true(blunt_valid_style('border-top-width', '2px'));
+    assert_true(blunt_valid_style('border-left-width', '0'));
+    assert_same(false, blunt_valid_style('border-top-width', '-1px'));
+    assert_true(blunt_valid_style('gap', '12px'));
+    assert_same(false, blunt_valid_style('gap', '-2px'));
+}
+
+function test_validate_keyword_props(): void
+{
+    $ok = [
+        'border-style' => ['none', 'solid', 'dashed', 'dotted'],
+        'text-align' => ['left', 'center', 'right', 'justify'],
+        'justify-content' => ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'],
+        'align-items' => ['flex-start', 'center', 'flex-end', 'stretch', 'baseline'],
+    ];
+    foreach ($ok as $prop => $values) {
+        foreach ($values as $v) {
+            assert_true(blunt_valid_style($prop, $v), "$prop: $v");
+        }
+    }
+    assert_same(false, blunt_valid_style('border-style', 'double'));
+    assert_same(false, blunt_valid_style('text-align', 'start'));
+    assert_same(false, blunt_valid_style('justify-content', 'stretch'));
+    assert_same(false, blunt_valid_style('align-items', 'space-between'));
+    assert_same(false, blunt_valid_style('text-align', 'center; color: red'));
+}
+
+function test_validate_auto_side_margins_only(): void
+{
+    assert_true(blunt_valid_style('margin-left', 'auto'));
+    assert_true(blunt_valid_style('margin-right', 'auto'));
+    assert_same(false, blunt_valid_style('margin-top', 'auto'));
+    assert_same(false, blunt_valid_style('padding-left', 'auto'));
+}
+
+function test_validate_layout_breaking_props_stay_out(): void
+{
+    foreach (['position' => 'absolute', 'top' => '0', 'z-index' => '10', 'display' => 'flex', 'width' => '10px'] as $prop => $v) {
+        assert_same(false, blunt_valid_style($prop, $v), $prop);
+    }
+}
+
 function test_validate_href(): void
 {
     foreach (['/contact', 'about.html', 'https://example.com', 'mailto:a@b.c', '#top', ''] as $ok) {
