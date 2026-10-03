@@ -33,8 +33,13 @@
     return b;
   };
 
+  const blob = B.makeBlob(bar);
+  const toolButtons = {};
   for (const [id, label, key] of TOOLS) {
-    button(id, label, key).addEventListener('click', () => B.setTool(id));
+    const b = button(id, label, key);
+    b.classList.add('is-blobbed');
+    b.addEventListener('click', () => B.setTool(id));
+    toolButtons[id] = b;
   }
   B.mk('span', 'blunt-divider', bar);
   const save = button('save', 'Save', 'Ctrl+S');
@@ -48,6 +53,7 @@
       b.classList.toggle('is-active', active);
       if (TOOLS.some(([id]) => id === b.dataset.id)) b.setAttribute('aria-pressed', String(active));
     });
+    blob.move(toolButtons[tool]);
   });
   B.on('dirty', (dirty) => bar.classList.toggle('is-dirty', dirty));
 
@@ -69,6 +75,7 @@
   const clamp = (v, max) => Math.min(Math.max(0, v), Math.max(0, max));
   const applyState = () => {
     bar.classList.toggle('is-vertical', !!state.vertical);
+    blob.sync();
     if (state.x == null) return;
     bar.style.left = `${clamp(state.x, window.innerWidth - bar.offsetWidth)}px`;
     bar.style.top = `${clamp(state.y, window.innerHeight - bar.offsetHeight)}px`;

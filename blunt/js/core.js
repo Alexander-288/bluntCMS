@@ -29,6 +29,56 @@
 
   B.isUi = (node) => !!(node && node.closest && node.closest('.blunt-ui'));
 
+  B.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  /**
+   * A white blob behind the active button of a bar. When the active button changes, the leading
+   * edge runs ahead (the blob stretches into a pill over both buttons, squashing a little), then
+   * the trailing edge catches up and it settles as a circle — a liquid-looking move.
+   * The container must be positioned and isolated; blobbed buttons get the class .is-blobbed.
+   */
+  B.makeBlob = (container) => {
+    const blob = B.mk('span', 'blunt-blob');
+    container.prepend(blob); // painted first, so the buttons' icons can blend with it
+    blob.hidden = true;
+    let current = null;
+    const box = (btn) => ({ x: btn.offsetLeft, y: btn.offsetTop, w: btn.offsetWidth, h: btn.offsetHeight });
+    const place = (r) => Object.assign(blob.style, { left: `${r.x}px`, top: `${r.y}px`, width: `${r.w}px`, height: `${r.h}px` });
+
+    return {
+      move(btn) {
+        if (!btn) {
+          blob.hidden = true;
+          current = null;
+          return;
+        }
+        if (btn === current) return;
+        const from = current && current.isConnected && !blob.hidden ? box(current) : null;
+        const to = box(btn);
+        current = btn;
+        blob.hidden = false;
+        place(to);
+        if (!from || B.reducedMotion.matches) return;
+
+        const vertical = Math.abs(to.y - from.y) > Math.abs(to.x - from.x);
+        const [pos, size, a, b, s] = vertical ? ['top', 'height', from.y, to.y, to.h] : ['left', 'width', from.x, to.x, to.w];
+        const lo = Math.min(a, b);
+        const hi = Math.max(a, b) + s;
+        const squash = vertical ? 'scaleX(.84)' : 'scaleY(.84)';
+        blob.getAnimations().forEach((anim) => anim.cancel());
+        blob.animate([
+          { [pos]: `${a}px`, [size]: `${s}px`, transform: 'none' },
+          { [pos]: `${lo}px`, [size]: `${hi - lo}px`, transform: squash, offset: 0.42 },
+          { [pos]: `${b}px`, [size]: `${s}px`, transform: 'none' },
+        ], { duration: 460, easing: 'cubic-bezier(.3, .7, .2, 1)' });
+      },
+      /** Re-snap without animating (after the bar's layout changes, e.g. horizontal ↔ vertical). */
+      sync() {
+        if (current && current.isConnected) place(box(current));
+      },
+    };
+  };
+
   // Every inline style property the editor manages (same list as the server allowlist).
   B.STYLE_PROPS = [
     'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius',

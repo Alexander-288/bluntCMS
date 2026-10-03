@@ -44,6 +44,22 @@
 }
 .blunt-btn:hover { background: rgba(255, 255, 255, .12); }
 .blunt-btn.is-active { background: #fff; color: #1a1a1a; }
+
+/* Liquid "blob" behind the active tool / tab (see B.makeBlob). */
+.blunt-blob {
+  position: absolute;
+  border-radius: 999px;
+  background: #fff;
+  pointer-events: none;
+}
+.blunt-blob[hidden] { display: none; }
+/* Icons blend with "difference": white over the dark bar, dark wherever the white blob is —
+   including mid-stretch, so icons the blob passes over never disappear. */
+.blunt-btn.is-blobbed, .blunt-ibtn.is-blobbed { position: relative; }
+.blunt-btn.is-blobbed svg, .blunt-ibtn.is-blobbed svg { mix-blend-mode: difference; }
+.blunt-btn.is-blobbed.is-active, .blunt-ibtn.is-blobbed.is-active,
+.blunt-btn.is-blobbed.is-active:hover, .blunt-ibtn.is-blobbed.is-active:hover { background: transparent; color: #fff; }
+.blunt-ibtn.is-blobbed.is-dim, .blunt-ibtn.is-blobbed.is-dim.is-active { color: rgba(255, 255, 255, .4); }
 .blunt-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .blunt-btn svg { display: block; pointer-events: none; }
 
@@ -316,6 +332,8 @@ html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cu
   box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
 }
 .blunt-panel-bar {
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: space-between;

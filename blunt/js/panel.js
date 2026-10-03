@@ -93,8 +93,9 @@
     return b;
   };
   const tabButtons = {};
+  const blob = B.makeBlob(bar);
   for (const [id, label] of TABS) {
-    const b = iconButton(bar, id, label);
+    const b = iconButton(bar, id, label, 'is-blobbed');
     b.setAttribute('role', 'tab');
     b.addEventListener('click', () => {
       if (tab === id && !state.collapsed) return;
@@ -620,6 +621,7 @@
       b.setAttribute('aria-selected', String(active));
       b.dataset.tip = rel[id] || !el ? label : `${label} · nothing set yet`;
     }
+    blob.move(tabButtons[tab]);
     nameText.textContent = el ? B.describe(el) : 'Nothing selected';
     nameLine.classList.toggle('is-empty', !el);
     if (el) {
