@@ -60,3 +60,7 @@ Names beyond Light are not final.
 ## Status
 
 **BluntCMS Light** works. See `docs/install.md` to set it up and `docs/editor.md` for how to use it.
+
+## License
+
+**MIT** — see `LICENSE`. Use it, change it, ship it; just keep the copyright notice.
