@@ -307,7 +307,7 @@ html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cu
   z-index: 2147483646;
   display: flex;
   flex-direction: column;
-  width: 284px;
+  width: 320px;
   max-height: calc(100vh - 32px);
   overflow: hidden;
   border-radius: 26px; /* bar padding (6px) + half a tab button (20px): corners hug the buttons like the toolbar */
@@ -379,27 +379,28 @@ html[data-blunt-tool] body :not(.blunt-ui, .blunt-ui *) { cursor: var(--blunt-cu
 .blunt-ring {
   position: relative;
   display: grid;
-  grid-template-columns: 32px 1fr 32px;
+  grid-template-columns: 34px 1fr 34px;
   grid-template-rows: auto 1fr auto;
   align-items: center;
   justify-items: center;
-  gap: 2px;
-  padding: 18px 3px 3px;
+  gap: 0;
+  padding: 2px 3px;
   border-radius: 22px;
   background: rgba(255, 255, 255, .05);
 }
 .blunt-ring.is-border { border-radius: 18px; background: rgba(255, 255, 255, .07); }
 .blunt-ring.is-padding { border-radius: 14px; background: rgba(255, 255, 255, .09); }
-.blunt-ui .blunt-ring-label { position: absolute; top: 4px; left: 12px; color: rgba(255, 255, 255, .45); font-size: 10px; }
+/* The ring's name shares the line with its top value, so the diagram stays short */
+.blunt-ui .blunt-ring-label { position: absolute; top: 7px; left: 12px; color: rgba(255, 255, 255, .45); font-size: 10px; line-height: 12px; }
 .blunt-cell-top { grid-column: 2; grid-row: 1; }
 .blunt-cell-right { grid-column: 3; grid-row: 2; }
 .blunt-cell-bottom { grid-column: 2; grid-row: 3; }
 .blunt-cell-left { grid-column: 1; grid-row: 2; }
 .blunt-cell-inner { grid-column: 2; grid-row: 2; justify-self: stretch; }
-.blunt-ring .blunt-num { width: 32px; padding: 4px 0; background: transparent; }
+.blunt-ring .blunt-num { width: 34px; padding: 3px 0; background: transparent; }
 .blunt-ring .blunt-num:hover { background: rgba(255, 255, 255, .12); }
 .blunt-ring .blunt-num:focus { background: #fff; }
-.blunt-ui .blunt-content { padding: 9px 4px; border-radius: 999px; background: #fff; color: #1a1a1a; font-size: 11px; font-weight: 600; text-align: center; }
+.blunt-ui .blunt-content { margin: 2px 0; padding: 6px 2px; white-space: nowrap; border-radius: 999px; background: #fff; color: #1a1a1a; font-size: 11px; font-weight: 600; text-align: center; }
 
 /* Paint popup (Fill tool) — floats above the toolbar */
 .blunt-paintpop {
