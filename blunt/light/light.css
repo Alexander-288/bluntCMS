@@ -1,0 +1,84 @@
+/* BluntCMS Light: floating toolbar and inspector panel. */
+
+/* Toolbar */
+.blunt-toolbar {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+  user-select: none;
+  touch-action: none;
+  cursor: grab;
+}
+.blunt-toolbar.is-vertical { flex-direction: column; }
+
+.blunt-toolbar.is-vertical .blunt-btn::after {
+  bottom: auto;
+  top: 50%;
+  left: calc(100% + 12px);
+  transform: translateY(-50%);
+}
+.blunt-toolbar.is-vertical .blunt-divider { width: 24px; height: 1px; margin: 4px 0; }
+.blunt-toolbar.is-dirty .blunt-dot { display: block; }
+
+/* Inspector panel */
+.blunt-panel {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 2147483646;
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+  border-radius: 26px; /* bar padding (6px) + half a tab button (20px): corners hug the buttons like the toolbar */
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+.blunt-panel-bar {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+  padding: 6px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.blunt-panel-bar .blunt-divider { margin: 0 6px; }
+.blunt-panel-name {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 2px 16px 12px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.blunt-ui .blunt-name { min-width: 0; overflow: hidden; font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.blunt-ui .blunt-size { flex: none; margin-left: auto; color: rgba(255, 255, 255, .5); font-size: 12px; font-variant-numeric: tabular-nums; }
+.blunt-panel-name.is-empty .blunt-name { color: rgba(255, 255, 255, .5); font-weight: 500; }
+.blunt-panel.is-collapsed .blunt-panel-body { display: none; }
+
+.blunt-panel-body {
+  display: grid;
+  gap: 16px;
+  padding: 4px 14px 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .25) transparent;
+}
