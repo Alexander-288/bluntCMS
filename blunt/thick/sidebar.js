@@ -11,13 +11,20 @@
     page: svg('<path d="M7 3.5h6.5l5 5v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2zM13.5 3.5v5h5"/>'),
     chevron: svg('<path d="M6 9.5l6 6 6-6"/>', 16),
   };
-  const LAYOUT_NOTE = 'Justify, align and gap work on flex and grid containers. Changing display comes with the Position tab.';
+  const LAYOUT_NOTE = 'Justify, align and gap work on flex and grid containers. Set display to flex or grid in the Position tab.';
 
-  // [id, label, icon, sections]; each section is [key, title, renderer]
+  // Thick also edits these (the server allows them for this tier); Reset clears them too.
+  B.STYLE_PROPS.push(
+    'display', 'position', 'top', 'right', 'bottom', 'left', 'z-index', 'overflow',
+    'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height', 'opacity',
+  );
+
+  // [id, label, icon, sections, relevant?]; each section is [key, title, renderer]
   const TABS = [
-    ['box', 'Box', 'box', [['spacing', 'Spacing', S.box]]],
-    ['layout', 'Layout', 'grid', [['layout', 'Layout', S.layout]]],
-    ['style', 'Style', 'colour', [['border', 'Border and corners', S.border], ['colours', 'Colours', S.colour]]],
+    ['box', 'Box', 'box', [['spacing', 'Spacing', S.box], ['size', 'Size', S.size]], (r) => r.box || r.size],
+    ['position', 'Position', 'position', [['position', 'Position', S.position]], (r) => r.position],
+    ['layout', 'Layout', 'grid', [['layout', 'Layout', S.layout]], (r) => r.layout],
+    ['style', 'Style', 'colour', [['border', 'Border and corners', S.border], ['colours', 'Colours', S.colour], ['opacity', 'Opacity', S.opacity]], (r) => r.border || r.colour || r.opacity],
   ];
 
   // ---- Remembered state: tab and folded sections ----
@@ -132,14 +139,14 @@
   function updateChrome() {
     const el = current();
     const rel = S.relevance(el);
-    const relevant = { box: rel.box, layout: rel.layout, style: rel.border || rel.colour };
-    for (const [id, label] of TABS) {
+    for (const [id, label, , , isRelevant] of TABS) {
       const b = tabButtons[id];
       const active = id === tab;
+      const relevant = isRelevant(rel);
       b.classList.toggle('is-active', active);
-      b.classList.toggle('is-dim', !relevant[id]);
+      b.classList.toggle('is-dim', !relevant);
       b.setAttribute('aria-selected', String(active));
-      b.dataset.tip = relevant[id] || !el ? label : `${label} · nothing set yet`;
+      b.dataset.tip = relevant || !el ? label : `${label} · nothing set yet`;
     }
     blob.move(tabButtons[tab]);
     nameText.textContent = el ? B.describe(el) : 'Nothing selected';

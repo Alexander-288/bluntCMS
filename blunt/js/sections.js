@@ -35,7 +35,11 @@
     'ai-end': svg(`<path d="M4 21h16"/>${bars([[6, 10, 8], [14, 6, 12]])}`),
     stretch: svg(`<path d="M4 3h16M4 21h16"/>${bars([[7, 6, 12], [13, 6, 12]])}`),
     baseline: svg(`${bars([[6, 6, 10], [14, 9, 7]])}<path d="M3 14h18" stroke-dasharray="2 2"/>`),
+    position: svg('<circle cx="12" cy="12" r="6.5"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/>'),
+    'bring-forward': svg('<path d="M15 9V6.5A2.5 2.5 0 0 0 12.5 4h-6A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 6.5 15H9"/><rect x="9" y="9" width="11" height="11" rx="2.5" fill="currentColor" stroke="none"/>'),
+    'send-backward': svg('<path d="M6.5 4h6A2.5 2.5 0 0 1 15 6.5V9h-3.5A2.5 2.5 0 0 0 9 11.5V15H6.5A2.5 2.5 0 0 1 4 12.5v-6A2.5 2.5 0 0 1 6.5 4z" fill="currentColor" stroke="none"/><rect x="9" y="9" width="11" height="11" rx="2.5"/>'),
   };
+  const STATIC_NOTE = 'Offsets and z-index only work when position isn\'t static.';
 
   B.sections = {
     icons: ICONS,
@@ -138,9 +142,82 @@
       if (el && !container && opts.containerNote) f.note(body, opts.containerNote);
     },
 
+    /** Display, position mode, offsets, stacking, overflow (Thick). */
+    position(body, el, f) {
+      f.textSeg(f.row(body, 'Display'), el, {
+        prop: 'display',
+        options: [['block', 'block'], ['inline', 'inline'], ['flex', 'flex'], ['grid', 'grid'], ['none', 'none', 'Hides the element']],
+      });
+      f.textSeg(f.row(body, 'Position'), el, {
+        prop: 'position',
+        options: [['static', 'static'], ['relative', 'relative'], ['absolute', 'absolute'], ['fixed', 'fixed'], ['sticky', 'sticky']],
+      });
+
+      const ring = B.mk('div', 'blunt-ring is-margin blunt-offsets', body);
+      B.mk('span', 'blunt-ring-label', ring).textContent = 'Offsets';
+      for (const side of SIDES) {
+        const cell = B.mk('div', `blunt-cell blunt-cell-${side}`, ring);
+        f.numberField(cell, el, { props: [side], min: -Infinity, keywords: ['auto'], label: `${side} offset` });
+      }
+      const inner = B.mk('div', 'blunt-cell blunt-cell-inner', ring);
+      B.mk('div', 'blunt-content is-dim', inner).textContent = el ? B.describe(el) : '–';
+
+      const stack = f.row(body, 'Stacking');
+      const line = B.mk('div', 'blunt-stackrow', stack);
+      f.numberField(line, el, { props: ['z-index'], unit: '', min: -9999, max: 9999, keywords: ['auto'], label: 'z-index' });
+      const nudge = (dir, icon, tip) => {
+        const b = f.iconButton(line, icon, tip, 'is-sm');
+        b.disabled = !el;
+        if (!el) return;
+        b.addEventListener('click', () => {
+          const z = parseInt(f.computed(el, 'z-index'), 10) || 0;
+          f.setStyles(el, { 'z-index': String(Math.max(-9999, Math.min(9999, z + dir))) }, null);
+        });
+      };
+      nudge(1, 'bring-forward', 'Bring forward (z-index + 1)');
+      nudge(-1, 'send-backward', 'Send backward (z-index − 1)');
+
+      f.textSeg(f.row(body, 'Overflow'), el, {
+        prop: 'overflow',
+        options: [['visible', 'visible'], ['hidden', 'hidden', 'Cuts off anything outside the box'], ['scroll', 'scroll'], ['auto', 'auto']],
+      });
+
+      const hint = B.mk('p', 'blunt-note', body);
+      hint.textContent = el ? '' : STATIC_NOTE;
+      if (el) {
+        f.watch(() => {
+          const isStatic = f.computed(el, 'position') === 'static';
+          ring.classList.toggle('is-inert', isStatic);
+          hint.textContent = isStatic ? STATIC_NOTE : '';
+          hint.hidden = !isStatic;
+        });
+      }
+    },
+
+    /** Width and height with their min and max (Thick). */
+    size(body, el, f) {
+      const grid = B.mk('div', 'blunt-pair', body);
+      const field = (label, prop, keywords) => {
+        const r = f.row(grid, label);
+        f.numberField(B.mk('div', 'blunt-all', r), el, { props: [prop], keywords, label: prop.replace('-', ' ') });
+      };
+      field('Width', 'width', ['auto']);
+      field('Height', 'height', ['auto']);
+      field('Min width', 'min-width', ['auto']);
+      field('Min height', 'min-height', ['auto']);
+      field('Max width', 'max-width', ['none']);
+      field('Max height', 'max-height', ['none']);
+      f.note(body, 'Type auto or none to reset a size to its natural value · empty to clear');
+    },
+
+    /** Opacity as a percentage (Thick). */
+    opacity(body, el, f) {
+      f.numberField(B.mk('div', 'blunt-all', f.row(body, 'Opacity %')), el, { props: ['opacity'], unit: '', scale: 100, min: 0, max: 100, label: 'opacity' });
+    },
+
     /** Which sections have something for this element — the rest get a dimmed icon. */
     relevance(el) {
-      if (!el || !el.isConnected) return { box: false, border: false, colour: false, layout: false };
+      if (!el || !el.isConnected) return { box: false, border: false, colour: false, layout: false, position: false, size: false, opacity: false };
       const cs = getComputedStyle(el);
       const any = (props) => props.some((p) => parseFloat(cs.getPropertyValue(p)) > 0);
       const hasBorder = SIDES.some((s) => cs.getPropertyValue(`border-${s}-style`) !== 'none' && parseFloat(cs.getPropertyValue(`border-${s}-width`)) > 0);
@@ -151,6 +228,9 @@
         border: hasBorder || any(CORNERS.map((c) => `border-${c}-radius`)),
         colour: hasText || hasBorder || !transparent,
         layout: hasText || FLEX_OR_GRID.test(cs.display) || (cs.marginLeft === cs.marginRight && B.currentStyle(el, 'margin-left') === 'auto'),
+        position: cs.position !== 'static' || cs.overflow !== 'visible' || ['display', 'position', 'z-index', 'overflow'].some((p) => B.currentStyle(el, p) !== ''),
+        size: ['width', 'height', 'min-width', 'min-height', 'max-width', 'max-height'].some((p) => B.currentStyle(el, p) !== '') || cs.maxWidth !== 'none',
+        opacity: parseFloat(cs.opacity) < 1,
       };
     },
   };

@@ -107,6 +107,15 @@ html.blunt-hide-ui .blunt-ui:not(.blunt-unhide) { display: none !important; }
 .blunt-sb-section.is-folded .blunt-sb-section-head svg { transform: rotate(-90deg); }
 .blunt-sb-section-body { display: grid; gap: 16px; padding: 0 14px 16px; }
 
+/* Thick-only sections: size pairs, offsets diagram, stacking row */
+.blunt-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 8px; }
+.blunt-offsets { transition: opacity .15s; }
+.blunt-offsets.is-inert { opacity: .45; }
+.blunt-ui .blunt-content.is-dim { background: rgba(255, 255, 255, .09); color: rgba(255, 255, 255, .6); font-weight: 500; }
+.blunt-stackrow { display: flex; align-items: center; gap: 6px; }
+.blunt-stackrow .blunt-num { flex: 1; }
+.blunt-note[hidden] { display: none; }
+
 /* Brings the editor back after Tab hid it */
 .blunt-unhide {
   position: fixed;

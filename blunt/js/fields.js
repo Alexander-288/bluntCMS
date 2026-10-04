@@ -67,8 +67,12 @@
       B.mk('p', 'blunt-note', parent).textContent = text;
     }
 
-    /** Number pill: drag sideways to scrub, click to type, ↑/↓ to step, empty to clear. */
-    function numberField(parent, el, { props, clear = [], min = 0, allowAuto = false, read, label, disabled = false }) {
+    /**
+     * Number pill: drag sideways to scrub, click to type, ↑/↓ to step, empty to clear.
+     * Lengths by default. keywords: words it also accepts (allowAuto = ['auto']).
+     * unit '' makes it a plain number: scale turns the shown number into the stored one (opacity 35 → 0.35).
+     */
+    function numberField(parent, el, { props, clear = [], min = 0, max = Infinity, allowAuto = false, keywords, unit = 'px', scale = 1, read, label, disabled = false }) {
       const input = B.mk('input', 'blunt-num', parent);
       input.type = 'text';
       input.spellcheck = false;
@@ -79,7 +83,18 @@
         input.value = '–';
         return;
       }
-      const show = read || (() => (allowAuto && B.currentStyle(el, props[0]) === 'auto' ? 'auto' : px(el, props[0])));
+      const words = keywords || (allowAuto ? ['auto'] : []);
+      const clamp = (n) => Math.min(max, Math.max(min, n));
+      const store = (n) => (unit === 'px' ? `${n}px` : String(Math.round(n) / scale));
+      const show = read || (() => {
+        const inline = B.currentStyle(el, props[0]);
+        if (words.includes(inline)) return inline;
+        const c = computed(el, props[0]);
+        if (words.includes(c)) return c;
+        if (unit === 'px') return px(el, props[0]);
+        const n = parseFloat(c);
+        return Number.isNaN(n) ? c : String(Math.round(n * scale));
+      });
 
       updaters.push(() => {
         if (document.activeElement !== input) input.value = show();
@@ -101,7 +116,11 @@
       const parse = (raw) => {
         const v = raw.trim();
         if (v === '') return '';
-        if (allowAuto && v === 'auto') return 'auto';
+        if (words.includes(v)) return v;
+        if (unit !== 'px') {
+          const n = Number(v);
+          return v !== '' && Number.isFinite(n) && n === clamp(n) ? store(n) : null;
+        }
         const withUnit = /^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v;
         if (withUnit !== '0' && !LENGTH.test(withUnit)) return null;
         if (min >= 0 && withUnit.startsWith('-')) return null;
@@ -111,7 +130,8 @@
       input.addEventListener('change', () => {
         const v = parse(input.value);
         if (v === null) {
-          B.toast('Use a size like 12, 12px, 1.5rem or 50%.', 'error');
+          const or = words.length ? ` (or ${words.join(' / ')})` : '';
+          B.toast(unit === 'px' ? `Use a size like 12, 12px, 1.5rem or 50%${or}.` : `Use a number from ${min} to ${max}${or}.`, 'error');
           input.value = show();
           return;
         }
@@ -126,9 +146,9 @@
         } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
           e.preventDefault();
           const step = (e.key === 'ArrowUp' ? 1 : -1) * (e.shiftKey ? 10 : 1);
-          const n = Math.max(min, (parseFloat(input.value) || 0) + step);
+          const n = clamp((parseFloat(input.value) || 0) + step);
           input.value = String(n);
-          setStyles(el, valuesFor(`${n}px`), null);
+          setStyles(el, valuesFor(store(n)), null);
         }
       });
 
@@ -164,8 +184,8 @@
             });
           }
         }
-        const n = Math.max(min, Math.round(scrub.start + dx));
-        scrub.value = `${n}px`;
+        const n = clamp(Math.round(scrub.start + dx));
+        scrub.value = store(n);
         input.value = String(n);
         if (scrub.token) {
           document.documentElement.style.setProperty(scrub.tokenName, scrub.value);
@@ -204,6 +224,32 @@
         b.disabled = !el || disabled;
         b.addEventListener('click', () => {
           // Keywords can't be tokens, so these always edit the element itself.
+          const next = B.currentStyle(el, prop) === value ? '' : value;
+          const rec = B.styleRec(el, prop, B.currentStyle(el, prop), next);
+          B.applyValue(rec, next);
+          B.commit([rec]);
+        });
+        return [value, b];
+      });
+      if (!el || disabled) return;
+      updaters.push(() => {
+        const current = computed(el, prop);
+        buttons.forEach(([value, b]) => b.classList.toggle('is-active', current === value));
+        seg.classList.toggle('is-set', B.currentStyle(el, prop) !== '');
+      });
+      updaters[updaters.length - 1]();
+    }
+
+    /** Text button group for a keyword property, e.g. display. Clicking the active inline value again clears it. */
+    function textSeg(parent, el, { prop, options, disabled = false }) {
+      const seg = B.mk('div', 'blunt-iseg is-text', parent);
+      const buttons = options.map(([value, text, tip]) => {
+        const b = B.mk('button', 'blunt-segtext', seg);
+        b.type = 'button';
+        b.textContent = text;
+        if (tip) b.dataset.tip = tip;
+        b.disabled = !el || disabled;
+        b.addEventListener('click', () => {
           const next = B.currentStyle(el, prop) === value ? '' : value;
           const rec = B.styleRec(el, prop, B.currentStyle(el, prop), next);
           B.applyValue(rec, next);
@@ -301,6 +347,6 @@
     /** Lets a section register its own updater (e.g. the box diagram's size readout). */
     const watch = (fn) => updaters.push(fn);
 
-    return { row, note, numberField, iconSeg, colourField, iconButton, setStyles, reset, refresh, watch, computed, px, isTransparent };
+    return { row, note, numberField, iconSeg, textSeg, colourField, iconButton, setStyles, reset, refresh, watch, computed, px, isTransparent };
   };
 })();
