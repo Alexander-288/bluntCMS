@@ -1,0 +1,134 @@
+/* BluntCMS Thick: toolbar docked to the bottom edge, sidebar docked to the right. */
+
+/* The page makes room for the docked UI. The site's own fixed elements and media queries still see the full window. */
+html.blunt-docked { --blunt-side: 320px; margin-right: var(--blunt-side) !important; padding-bottom: 80px !important; }
+html.blunt-hide-ui { margin-right: 0 !important; padding-bottom: 0 !important; }
+html.blunt-hide-ui .blunt-ui:not(.blunt-unhide) { display: none !important; }
+
+/* ---- Toolbar: sits on the bottom edge, curved shoulders flow into it ---- */
+.blunt-toolbar.blunt-dock {
+  position: fixed;
+  left: calc(50% - var(--blunt-side, 0px) / 2);
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 14px;
+  border-radius: 30px 30px 0 0;
+  background: #1a1a1a;
+  user-select: none;
+}
+.blunt-dock::before, .blunt-dock::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+.blunt-dock::before { right: 100%; background: radial-gradient(circle at 0 0, transparent 19.5px, #1a1a1a 20px); }
+.blunt-dock::after { left: 100%; background: radial-gradient(circle at 100% 0, transparent 19.5px, #1a1a1a 20px); }
+.blunt-dock .blunt-divider { margin: 0 8px; }
+.blunt-dock.is-dirty .blunt-dot { display: block; }
+.blunt-btn:disabled { opacity: .35; cursor: default; }
+.blunt-btn:disabled:hover { background: transparent; }
+
+/* ---- Sidebar ---- */
+.blunt-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2147483646;
+  display: flex;
+  flex-direction: column;
+  width: var(--blunt-side, 320px);
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.blunt-sitebar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.blunt-pagepill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+  height: 40px;
+  padding: 0 14px 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  white-space: nowrap;
+}
+.blunt-pagepill svg { flex: none; }
+.blunt-ui .blunt-pagepill-dir { color: rgba(255, 255, 255, .5); }
+.blunt-ui .blunt-pagepill-file { overflow: hidden; font-weight: 600; text-overflow: ellipsis; }
+
+.blunt-sb-head { padding: 12px 16px 10px; }
+.blunt-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; min-height: 16px; margin-bottom: 4px; }
+.blunt-ui .blunt-crumb, .blunt-ui .blunt-crumb-sep, .blunt-ui .blunt-crumb-more { color: rgba(255, 255, 255, .45); font-size: 11px; }
+.blunt-crumb { margin: 0; padding: 0; border: 0; background: none; cursor: pointer; }
+.blunt-crumb:hover { color: #fff; text-decoration: underline; }
+.blunt-sb-name { display: flex; align-items: baseline; gap: 8px; }
+.blunt-ui .blunt-name { min-width: 0; overflow: hidden; font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.blunt-ui .blunt-size { flex: none; margin-left: auto; color: rgba(255, 255, 255, .5); font-size: 12px; font-variant-numeric: tabular-nums; }
+.blunt-sb-name.is-empty .blunt-name { color: rgba(255, 255, 255, .5); font-weight: 500; }
+
+.blunt-sb-tabs { position: relative; isolation: isolate; display: flex; align-items: center; gap: 2px; padding: 0 12px 10px; }
+.blunt-sb-tabs .blunt-divider { margin: 0 6px; }
+
+.blunt-sb-body {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .25) transparent;
+}
+.blunt-sb-section { border-top: 1px solid rgba(255, 255, 255, .08); }
+.blunt-sb-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0;
+  padding: 12px 16px;
+  border: 0;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+}
+.blunt-ui .blunt-sb-section-head span { font-size: 12px; font-weight: 600; }
+.blunt-sb-section-head svg { opacity: .5; transition: transform .15s; }
+.blunt-sb-section-head:hover svg { opacity: 1; }
+.blunt-sb-section.is-folded .blunt-sb-section-head svg { transform: rotate(-90deg); }
+.blunt-sb-section-body { display: grid; gap: 16px; padding: 0 14px 16px; }
+
+/* Thick-only sections: size pairs, offsets diagram, stacking row */
+.blunt-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 8px; }
+.blunt-offsets { transition: opacity .15s; }
+.blunt-offsets.is-inert { opacity: .45; }
+.blunt-ui .blunt-content.is-dim { background: rgba(255, 255, 255, .09); color: rgba(255, 255, 255, .6); font-weight: 500; }
+.blunt-stackrow { display: flex; align-items: center; gap: 6px; }
+.blunt-stackrow .blunt-num { flex: 1; }
+.blunt-note[hidden] { display: none; }
+
+/* Brings the editor back after Tab hid it */
+.blunt-unhide {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2147483646;
+  display: none;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+  cursor: pointer;
+}
+html.blunt-hide-ui .blunt-unhide { display: block; }

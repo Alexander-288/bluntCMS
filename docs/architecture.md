@@ -25,8 +25,9 @@ blunt/
   lib.php         loads everything in lib/
   lib/            scanner, edits, tokens, validation, paths, auth, backups
   editor.css      styles shared by every tier: handles, tags, controls, picker
-  js/             shared editor core: core, tokens, overlay, hover, text, fill, picker, main
+  js/             shared editor core: core, tokens, overlay, hover, text, fill, picker, tooltip, fields, sections, main
   light/          Light UI: toolbar, inspector panel, light.css, manifest.php
+  thick/          Thick UI: docked toolbar, sidebar, thick.css, manifest.php
   backups/        previous versions of each file
   data/           runtime state, like the login lockout
   .htaccess       blocks direct access to config, lib, data and backups
@@ -34,15 +35,18 @@ blunt/
 
 ## Tiers
 
-Each tier (Light, later Thick) is a folder in `blunt/` with its own UI and a `manifest.php`. The manifest lists the tier's CSS and JS files in load order, shared files included. `edit.php` loads whatever the manifest lists.
+Each tier is a folder in `blunt/` with its own UI and a `manifest.php`. The manifest lists the tier's CSS and JS files in load order, shared files included. `edit.php` loads whatever the manifest lists.
 
-- `'tier' => 'light'` in `config.php` picks the tier. If it's missing or unknown, Light is used.
+- `light/` — floating toolbar and inspector panel
+- `thick/` — toolbar docked to the bottom edge, sidebar docked to the right (work in progress)
+- The inspector's controls (`js/fields.js`) and tab contents (`js/sections.js`) are shared, so both tiers edit styles the same way
+- `'tier' => 'light'` (or `'thick'`) in `config.php` picks the tier. If it's missing or unknown, Light is used.
 - `php tools/build.php <tier>` makes `dist/bluntcms-<tier>-<version>.zip`. It contains `blunt/` with only that tier's folder, and no config, data or backups.
 
 ## Where changes are saved
 
 - **Text and links** — written into the marked element in the `.html` file
-- **Element styles** — written as an inline `style=""` on the element
+- **Element styles** — written as an inline `style=""` on the element. The server only accepts a fixed list of properties (`lib/validate.php`). Light's list can't move or resize anything; the Thick tier adds display, position, offsets, z-index, overflow, sizes and opacity
 - **Token styles** — the `--name: value;` line is updated in the token CSS file set in `config.php`
 
 ### Surgical edits

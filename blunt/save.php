@@ -44,7 +44,7 @@ try {
         throw new BluntError('The token file changed since you opened this page. Reload to continue.', 409);
     }
 
-    $out = blunt_apply_changes($html, $css, $changes);
+    $out = blunt_apply_changes($html, $css, $changes, blunt_tier($config, blunt_cms_dir()));
 
     $backups = blunt_cms_dir() . '/backups';
     if ($out['html'] !== $html) {

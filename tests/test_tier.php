@@ -36,10 +36,26 @@ function test_tier_assets_light_keeps_load_order(): void
     assert_same(['editor.css', 'light/light.css'], $assets['css']);
     assert_same([
         'js/core.js', 'js/tokens.js', 'light/toolbar.js', 'js/overlay.js', 'js/hover.js',
-        'js/text.js', 'js/fill.js', 'js/picker.js', 'light/panel.js', 'js/main.js',
+        'js/text.js', 'js/fill.js', 'js/picker.js', 'js/tooltip.js', 'js/fields.js', 'js/sections.js',
+        'light/panel.js', 'js/main.js',
     ], $assets['js']);
     foreach (array_merge($assets['css'], $assets['js']) as $file) {
         assert_true(is_file(blunt_cms_dir() . '/' . $file), $file);
+    }
+}
+
+function test_tier_every_manifest_lists_real_files(): void
+{
+    $tiers = array_map(fn ($m) => basename(dirname($m)), glob(blunt_cms_dir() . '/*/manifest.php'));
+    assert_same(['light', 'thick'], $tiers);
+    foreach ($tiers as $tier) {
+        assert_same($tier, blunt_tier(['tier' => $tier], blunt_cms_dir()));
+        $assets = blunt_tier_assets(blunt_cms_dir(), $tier);
+        assert_same('js/core.js', $assets['js'][0], "$tier loads core first");
+        assert_same('js/main.js', end($assets['js']), "$tier loads main last");
+        foreach (array_merge($assets['css'], $assets['js']) as $file) {
+            assert_true(is_file(blunt_cms_dir() . '/' . $file), "$tier: $file");
+        }
     }
 }
 

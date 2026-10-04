@@ -7,13 +7,19 @@
   // The paint colour and target live here; the inspector panel edits them.
   B.paint = { color: '#1a1a1a', prop: 'background-color' };
 
+  /** Picks the element's colour up as the paint colour. The eyedropper tool then hands over to Fill. */
+  B.pickPaint = (el) => {
+    B.paint.color = B.toHex(getComputedStyle(el).getPropertyValue(B.paint.prop));
+    B.emit('paint');
+    B.toast(`Picked ${B.paint.color}`);
+    if (B.tool === 'pick') B.setTool('fill');
+  };
+
   /** Click paints, Alt-click picks the colour up, Shift-click paints the linked token. */
   B.paintClick = (el, e) => {
     const { prop, color } = B.paint;
     if (e.altKey) {
-      B.paint.color = B.toHex(getComputedStyle(el).getPropertyValue(prop));
-      B.emit('paint');
-      B.toast(`Picked ${B.paint.color}`);
+      B.pickPaint(el);
       return;
     }
     if (e.shiftKey) {

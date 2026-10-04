@@ -76,3 +76,13 @@ function test_changes_duplicate_names_rejected(): void
     $html = '<p data-blunt="a">1</p><p data-blunt="a">2</p>';
     assert_throws(fn () => blunt_apply_changes($html, null, [['type' => 'text', 'name' => 'a', 'value' => 'x']]), 'more than once');
 }
+
+function test_changes_thick_tier_writes_layout_styles(): void
+{
+    $change = [['type' => 'style', 'id' => 5, 'set' => ['position' => 'relative', 'z-index' => '2', 'opacity' => '0.5']]];
+    assert_throws(fn () => apply_page($change), 'not allowed');
+    $out = blunt_apply_changes(PAGE, null, $change, 'thick');
+    assert_true(str_contains($out['html'], 'style="position: relative; z-index: 2; opacity: 0.5"'), $out['html']);
+    $unset = blunt_apply_changes($out['html'], null, [['type' => 'style', 'id' => 5, 'unset' => ['position', 'z-index', 'opacity']]], 'thick');
+    assert_same(PAGE, $unset['html']);
+}

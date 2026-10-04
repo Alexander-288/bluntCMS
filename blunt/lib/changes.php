@@ -4,8 +4,9 @@ declare(strict_types=1);
 /**
  * Validates every change, then applies them all. Returns ['html' => ..., 'css' => ...].
  * Throws BluntError on the first invalid change; nothing is partially applied.
+ * $tier decides which style properties are allowed (see blunt_style_props).
  */
-function blunt_apply_changes(string $html, ?string $css, array $changes): array
+function blunt_apply_changes(string $html, ?string $css, array $changes, string $tier = 'light'): array
 {
     $tags = blunt_scan($html);
     $named = blunt_named($html, $tags);
@@ -69,13 +70,13 @@ function blunt_apply_changes(string $html, ?string $css, array $changes): array
                     throw new BluntError("Change $n is malformed.");
                 }
                 foreach ($set as $prop => $value) {
-                    if (!is_string($value) || !blunt_valid_style((string) $prop, $value)) {
+                    if (!is_string($value) || !blunt_valid_style((string) $prop, $value, $tier)) {
                         throw new BluntError("The style \"$prop\" with that value is not allowed.");
                     }
                     $styles[$id]['set'][(string) $prop] = $value;
                 }
                 foreach ($unset as $prop) {
-                    if (!is_string($prop) || !in_array($prop, BLUNT_STYLE_PROPS, true)) {
+                    if (!is_string($prop) || !in_array($prop, blunt_style_props($tier), true)) {
                         throw new BluntError('Removing that style is not allowed.');
                     }
                     $styles[$id]['unset'][] = $prop;
