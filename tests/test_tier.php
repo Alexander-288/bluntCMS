@@ -44,6 +44,21 @@ function test_tier_assets_light_keeps_load_order(): void
     }
 }
 
+function test_tier_every_manifest_lists_real_files(): void
+{
+    $tiers = array_map(fn ($m) => basename(dirname($m)), glob(blunt_cms_dir() . '/*/manifest.php'));
+    assert_same(['light', 'thick'], $tiers);
+    foreach ($tiers as $tier) {
+        assert_same($tier, blunt_tier(['tier' => $tier], blunt_cms_dir()));
+        $assets = blunt_tier_assets(blunt_cms_dir(), $tier);
+        assert_same('js/core.js', $assets['js'][0], "$tier loads core first");
+        assert_same('js/main.js', end($assets['js']), "$tier loads main last");
+        foreach (array_merge($assets['css'], $assets['js']) as $file) {
+            assert_true(is_file(blunt_cms_dir() . '/' . $file), "$tier: $file");
+        }
+    }
+}
+
 function test_tier_assets_rejects_bad_manifest(): void
 {
     $dir = tier_fixture(['bad' => '<?php return ["js" => "core.js"];']);
