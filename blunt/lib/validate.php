@@ -17,6 +17,7 @@ const BLUNT_STYLE_PROPS = [
 const BLUNT_THICK_STYLE_PROPS = [
     'display', 'position', 'top', 'right', 'bottom', 'left', 'z-index', 'overflow',
     'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height', 'opacity',
+    'font-size', 'font-weight', 'line-height', 'letter-spacing', 'font-style', 'text-decoration-line', 'text-transform',
 ];
 
 /** The style properties a tier may write. */
@@ -36,6 +37,9 @@ const BLUNT_KEYWORD_PROPS = [
     'display' => ['block', 'inline', 'inline-block', 'flex', 'inline-flex', 'grid', 'none'],
     'position' => ['static', 'relative', 'absolute', 'fixed', 'sticky'],
     'overflow' => ['visible', 'hidden', 'scroll', 'auto'],
+    'font-style' => ['normal', 'italic'],
+    'text-decoration-line' => ['none', 'underline', 'line-through'],
+    'text-transform' => ['none', 'uppercase', 'lowercase', 'capitalize'],
 ];
 
 /** Length properties that also take one keyword. */
@@ -43,6 +47,7 @@ const BLUNT_LENGTH_KEYWORDS = [
     'top' => 'auto', 'right' => 'auto', 'bottom' => 'auto', 'left' => 'auto',
     'width' => 'auto', 'height' => 'auto', 'min-width' => 'auto', 'min-height' => 'auto',
     'max-width' => 'none', 'max-height' => 'none',
+    'line-height' => 'normal', 'letter-spacing' => 'normal',
     'margin-left' => 'auto', 'margin-right' => 'auto',
 ];
 
@@ -80,6 +85,12 @@ function blunt_valid_style(string $prop, string $value, string $tier = 'light'):
     if ($prop === 'opacity') {
         return preg_match('/^(0?\.\d+|0|1|1\.0+)$/', $value) === 1;
     }
+    if ($prop === 'font-weight') {
+        return in_array($value, ['normal', 'bold'], true) || preg_match('/^[1-9]00$/', $value) === 1;
+    }
+    if ($prop === 'line-height' && preg_match('/^\d+(\.\d+)?$/', $value) === 1) {
+        return (float) $value <= 10; // a plain multiplier of the font size
+    }
     if ($prop === 'border-radius') {
         $parts = preg_split('/\s+/', trim($value)) ?: [];
         if (count($parts) < 1 || count($parts) > 4) {
@@ -92,7 +103,7 @@ function blunt_valid_style(string $prop, string $value, string $tier = 'light'):
         }
         return true;
     }
-    return blunt_is_length($value, str_starts_with($prop, 'margin-') || in_array($prop, ['top', 'right', 'bottom', 'left'], true));
+    return blunt_is_length($value, str_starts_with($prop, 'margin-') || in_array($prop, ['top', 'right', 'bottom', 'left', 'letter-spacing'], true));
 }
 
 function blunt_valid_token_name(string $name): bool

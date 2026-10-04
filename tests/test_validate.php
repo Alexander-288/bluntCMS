@@ -198,3 +198,36 @@ function test_validate_thick_props_are_thick_only(): void
     assert_same(BLUNT_STYLE_PROPS, blunt_style_props('light'));
     assert_same(BLUNT_STYLE_PROPS, blunt_style_props('anything-else'));
 }
+
+function test_validate_typography(): void
+{
+    $ok = [
+        'font-size' => ['16px', '1.25rem', '0'],
+        'font-weight' => ['100', '400', '700', '900', 'normal', 'bold'],
+        'line-height' => ['1', '1.55', '0.9', '24px', '1.5em', 'normal'],
+        'letter-spacing' => ['0', '1px', '-0.5px', '0.06em', 'normal'],
+        'font-style' => ['normal', 'italic'],
+        'text-decoration-line' => ['none', 'underline', 'line-through'],
+        'text-transform' => ['none', 'uppercase', 'lowercase', 'capitalize'],
+    ];
+    foreach ($ok as $prop => $values) {
+        foreach ($values as $v) {
+            assert_true(blunt_valid_style($prop, $v, 'thick'), "$prop: $v");
+            assert_same(false, blunt_valid_style($prop, $v), "light rejects $prop");
+        }
+    }
+    $bad = [
+        'font-size' => ['-2px', '16', 'large'],
+        'font-weight' => ['450', '1000', '0', 'bolder'],
+        'line-height' => ['-1', '11', '1.5.5'],
+        'letter-spacing' => ['2', 'wide'],
+        'font-style' => ['oblique'],
+        'text-decoration-line' => ['overline', 'underline red'],
+        'text-transform' => ['full-width'],
+    ];
+    foreach ($bad as $prop => $values) {
+        foreach ($values as $v) {
+            assert_same(false, blunt_valid_style($prop, $v, 'thick'), "$prop: $v");
+        }
+    }
+}
