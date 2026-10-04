@@ -36,7 +36,8 @@ function test_tier_assets_light_keeps_load_order(): void
     assert_same(['editor.css', 'light/light.css'], $assets['css']);
     assert_same([
         'js/core.js', 'js/tokens.js', 'light/toolbar.js', 'js/overlay.js', 'js/hover.js',
-        'js/text.js', 'js/fill.js', 'js/picker.js', 'light/panel.js', 'js/main.js',
+        'js/text.js', 'js/fill.js', 'js/picker.js', 'js/tooltip.js', 'js/fields.js', 'js/sections.js',
+        'light/panel.js', 'js/main.js',
     ], $assets['js']);
     foreach (array_merge($assets['css'], $assets['js']) as $file) {
         assert_true(is_file(blunt_cms_dir() . '/' . $file), $file);
