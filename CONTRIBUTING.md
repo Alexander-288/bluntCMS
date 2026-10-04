@@ -44,6 +44,7 @@ Then follow the tutorial's first part to set up the demo.
 - `blunt/js/` — the shared editor core, split by feature, sharing a `window.Blunt` object
 - `blunt/editor.css` — editor styles shared by every tier, prefixed `.blunt-`
 - `blunt/light/` — Light's toolbar and inspector panel, plus `manifest.php` listing the files to load
+- `blunt/thick/` — Thick's docked toolbar and sidebar (in progress), with its own `manifest.php`
 - `tools/build.php` — makes a release zip for one tier
 - `tests/` — the PHP test runner and tests
 - `demo/` — the demo site

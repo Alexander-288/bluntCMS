@@ -146,6 +146,17 @@ Undo history lives in memory until you save.
 - `Ctrl+S` — Save
 - `Esc` — deselect
 
+## BluntCMS Thick (in progress)
+
+Set `'tier' => 'thick'` in `blunt/config.php` to try it. It edits the same things as Light, with a different layout:
+
+- **Toolbar** sits on the bottom edge: Select, Move (coming soon), Text, Fill, Eyedropper, Reset, then Undo, Redo, Save and Exit
+- **Eyedropper** (`I`) — click an element to pick up its colour; Fill takes over with that colour
+- **Sidebar** sits on the right and the page makes room for it. It shows the page, the selected element with its parents (click one to select it), and the Box, Layout and Style tabs. Click a section title to fold it
+- **Tab** hides the whole editor so you can see the page clean. Press Tab again, or click "Show editor", to bring it back
+
+Known limit: the site's own fixed-position elements and media queries still use the full window width, so they can sit under the sidebar.
+
 ## Browser support
 
 Current versions of Chrome, Edge, Firefox and Safari.
