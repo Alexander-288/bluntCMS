@@ -37,3 +37,6 @@ blunt/data/*
 blunt/backups/*
 !blunt/backups/.htaccess
 *.blunt-tmp
+
+# Release zips (php tools/build.php <tier>)
+dist/
