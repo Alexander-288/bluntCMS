@@ -157,6 +157,7 @@ Set `'tier' => 'thick'` in `blunt/config.php` to try it. It edits the same thing
   - **Position** — display, position mode, top/right/bottom/left offsets, z-index (with bring forward / send backward) and overflow. Offsets and z-index only work when position isn't static
   - **Layout** — text alignment, centring, and justify / align / gap on flex and grid containers
   - **Style** — border, corners, colours and opacity (in %)
+  - **Type** — font size, weight (in steps of 100), line height (like `1.5`), letter spacing, bold / italic / underline / strikethrough for the whole element, letter case, alignment and text colour. The font itself is shown but can't be changed yet
 - **Tab** hides the whole editor so you can see the page clean. Press Tab again, or click "Show editor", to bring it back
 
 Known limit: the site's own fixed-position elements and media queries still use the full window width, so they can sit under the sidebar.

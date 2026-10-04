@@ -71,8 +71,9 @@
      * Number pill: drag sideways to scrub, click to type, ↑/↓ to step, empty to clear.
      * Lengths by default. keywords: words it also accepts (allowAuto = ['auto']).
      * unit '' makes it a plain number: scale turns the shown number into the stored one (opacity 35 → 0.35).
+     * step: the arrow-key and scrub increment (font weight: 100); decimals: shown precision; scrubPx: drag pixels per step.
      */
-    function numberField(parent, el, { props, clear = [], min = 0, max = Infinity, allowAuto = false, keywords, unit = 'px', scale = 1, read, label, disabled = false }) {
+    function numberField(parent, el, { props, clear = [], min = 0, max = Infinity, allowAuto = false, keywords, unit = 'px', scale = 1, step = 1, decimals = 0, scrubPx = 1, read, label, disabled = false }) {
       const input = B.mk('input', 'blunt-num', parent);
       input.type = 'text';
       input.spellcheck = false;
@@ -85,7 +86,8 @@
       }
       const words = keywords || (allowAuto ? ['auto'] : []);
       const clamp = (n) => Math.min(max, Math.max(min, n));
-      const store = (n) => (unit === 'px' ? `${n}px` : String(Math.round(n) / scale));
+      const round = (n) => +n.toFixed(decimals);
+      const store = (n) => (unit === 'px' ? `${n}px` : String(+(round(n) / scale).toFixed(4)));
       const show = read || (() => {
         const inline = B.currentStyle(el, props[0]);
         if (words.includes(inline)) return inline;
@@ -93,7 +95,7 @@
         if (words.includes(c)) return c;
         if (unit === 'px') return px(el, props[0]);
         const n = parseFloat(c);
-        return Number.isNaN(n) ? c : String(Math.round(n * scale));
+        return Number.isNaN(n) ? c : String(round(n * scale));
       });
 
       updaters.push(() => {
@@ -119,7 +121,8 @@
         if (words.includes(v)) return v;
         if (unit !== 'px') {
           const n = Number(v);
-          return v !== '' && Number.isFinite(n) && n === clamp(n) ? store(n) : null;
+          const onStep = step <= 1 || n % step === 0; // whole steps like font weight's 100s
+          return v !== '' && Number.isFinite(n) && n === clamp(n) && onStep ? store(round(n)) : null;
         }
         const withUnit = /^-?\d+(\.\d+)?$/.test(v) ? `${v}px` : v;
         if (withUnit !== '0' && !LENGTH.test(withUnit)) return null;
@@ -131,7 +134,7 @@
         const v = parse(input.value);
         if (v === null) {
           const or = words.length ? ` (or ${words.join(' / ')})` : '';
-          B.toast(unit === 'px' ? `Use a size like 12, 12px, 1.5rem or 50%${or}.` : `Use a number from ${min} to ${max}${or}.`, 'error');
+          B.toast(unit === 'px' ? `Use a size like 12, 12px, 1.5rem or 50%${or}.` : `Use a number from ${min} to ${max}${step > 1 ? ` in steps of ${step}` : ''}${or}.`, 'error');
           input.value = show();
           return;
         }
@@ -145,8 +148,8 @@
           input.blur();
         } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
           e.preventDefault();
-          const step = (e.key === 'ArrowUp' ? 1 : -1) * (e.shiftKey ? 10 : 1);
-          const n = clamp((parseFloat(input.value) || 0) + step);
+          const delta = (e.key === 'ArrowUp' ? 1 : -1) * step * (e.shiftKey ? 10 : 1);
+          const n = clamp(round((parseFloat(input.value) || 0) + delta));
           input.value = String(n);
           setStyles(el, valuesFor(store(n)), null);
         }
@@ -184,7 +187,7 @@
             });
           }
         }
-        const n = clamp(Math.round(scrub.start + dx));
+        const n = clamp(round(scrub.start + Math.round(dx / scrubPx) * step));
         scrub.value = store(n);
         input.value = String(n);
         if (scrub.token) {

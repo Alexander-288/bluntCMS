@@ -17,6 +17,7 @@
   B.STYLE_PROPS.push(
     'display', 'position', 'top', 'right', 'bottom', 'left', 'z-index', 'overflow',
     'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height', 'opacity',
+    'font-size', 'font-weight', 'line-height', 'letter-spacing', 'font-style', 'text-decoration-line', 'text-transform',
   );
 
   // [id, label, icon, sections, relevant?]; each section is [key, title, renderer]
@@ -25,6 +26,7 @@
     ['position', 'Position', 'position', [['position', 'Position', S.position]], (r) => r.position],
     ['layout', 'Layout', 'grid', [['layout', 'Layout', S.layout]], (r) => r.layout],
     ['style', 'Style', 'colour', [['border', 'Border and corners', S.border], ['colours', 'Colours', S.colour], ['opacity', 'Opacity', S.opacity]], (r) => r.border || r.colour || r.opacity],
+    ['type', 'Type', 'type', [['type', 'Text', S.type]], (r) => r.type],
   ];
 
   // ---- Remembered state: tab and folded sections ----

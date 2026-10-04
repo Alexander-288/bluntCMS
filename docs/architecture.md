@@ -46,7 +46,7 @@ Each tier is a folder in `blunt/` with its own UI and a `manifest.php`. The mani
 ## Where changes are saved
 
 - **Text and links** — written into the marked element in the `.html` file
-- **Element styles** — written as an inline `style=""` on the element. The server only accepts a fixed list of properties (`lib/validate.php`). Light's list can't move or resize anything; the Thick tier adds display, position, offsets, z-index, overflow, sizes and opacity
+- **Element styles** — written as an inline `style=""` on the element. The server only accepts a fixed list of properties (`lib/validate.php`). Light's list can't move or resize anything; the Thick tier adds display, position, offsets, z-index, overflow, sizes, opacity and typography
 - **Token styles** — the `--name: value;` line is updated in the token CSS file set in `config.php`
 
 ### Surgical edits

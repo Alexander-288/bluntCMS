@@ -35,6 +35,11 @@
     'ai-end': svg(`<path d="M4 21h16"/>${bars([[6, 10, 8], [14, 6, 12]])}`),
     stretch: svg(`<path d="M4 3h16M4 21h16"/>${bars([[7, 6, 12], [13, 6, 12]])}`),
     baseline: svg(`${bars([[6, 6, 10], [14, 9, 7]])}<path d="M3 14h18" stroke-dasharray="2 2"/>`),
+    type: svg('<path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/>'),
+    bold: svg('<path d="M7 4.5h5.5a3.75 3.75 0 0 1 0 7.5H7zM7 12h6.5a3.75 3.75 0 0 1 0 7.5H7z" stroke-width="2.5"/>'),
+    italic: svg('<path d="M10 4.5h8M6 19.5h8M14.5 4.5l-5 15"/>'),
+    underline: svg('<path d="M7 4v7a5 5 0 0 0 10 0V4M5.5 20h13"/>'),
+    strike: svg('<path d="M4.5 12h15M16.5 6.5c-.7-1.2-2.3-2-4.5-2-2.8 0-4.5 1.4-4.5 3.3 0 1.4.9 2.4 2.6 3M7.3 16.8c.7 1.6 2.4 2.7 4.9 2.7 2.8 0 4.6-1.4 4.6-3.4 0-.8-.3-1.5-.8-2.1"/>'),
     position: svg('<circle cx="12" cy="12" r="6.5"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/>'),
     'bring-forward': svg('<path d="M15 9V6.5A2.5 2.5 0 0 0 12.5 4h-6A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 6.5 15H9"/><rect x="9" y="9" width="11" height="11" rx="2.5" fill="currentColor" stroke="none"/>'),
     'send-backward': svg('<path d="M6.5 4h6A2.5 2.5 0 0 1 15 6.5V9h-3.5A2.5 2.5 0 0 0 9 11.5V15H6.5A2.5 2.5 0 0 1 4 12.5v-6A2.5 2.5 0 0 1 6.5 4z" fill="currentColor" stroke="none"/><rect x="9" y="9" width="11" height="11" rx="2.5"/>'),
@@ -210,6 +215,59 @@
       f.note(body, 'Type auto or none to reset a size to its natural value · empty to clear');
     },
 
+    /** Font size, weight, line height, letter spacing, style toggles, case, alignment and colour (Thick). */
+    type(body, el, f) {
+      const family = B.mk('div', 'blunt-family', f.row(body, 'Font'));
+      family.textContent = el ? f.computed(el, 'font-family').split(',')[0].replace(/["']/g, '').trim() : '–';
+      if (el) B.mk('span', 'blunt-family-note', family).textContent = B.currentStyle(el, 'font-family') ? 'set here' : 'from the site';
+
+      const grid = B.mk('div', 'blunt-pair', body);
+      const cell = (label) => B.mk('div', 'blunt-all', f.row(grid, label));
+      f.numberField(cell('Size'), el, { props: ['font-size'], label: 'font size' });
+      f.numberField(cell('Weight'), el, { props: ['font-weight'], unit: '', min: 100, max: 900, step: 100, scrubPx: 12, label: 'font weight' });
+      f.numberField(cell('Line height'), el, {
+        props: ['line-height'], unit: '', min: 0, max: 10, step: 0.05, decimals: 2, scrubPx: 2, keywords: ['normal'], label: 'line height',
+        read: () => {
+          const inline = B.currentStyle(el, 'line-height');
+          if (inline) return inline;
+          const lh = f.computed(el, 'line-height');
+          return lh === 'normal' ? 'normal' : String(+(parseFloat(lh) / parseFloat(f.computed(el, 'font-size'))).toFixed(2));
+        },
+      });
+      f.numberField(cell('Letter spacing'), el, { props: ['letter-spacing'], min: -Infinity, keywords: ['normal'], label: 'letter spacing' });
+
+      // Toggles flip a style; when the value set here is what made it on (or off), they clear it instead.
+      const toggles = B.mk('div', 'blunt-iseg', f.row(body, 'Style'));
+      const toggle = (icon, label, prop, isOn, on, off) => {
+        const b = f.iconButton(toggles, icon, label, 'is-sm');
+        b.disabled = !el;
+        if (!el) return;
+        b.addEventListener('click', () => {
+          const before = B.currentStyle(el, prop);
+          const next = isOn() ? (before === on ? '' : off) : (before === off ? '' : on);
+          const rec = B.styleRec(el, prop, before, next);
+          B.applyValue(rec, next);
+          B.commit([rec]);
+        });
+        f.watch(() => b.classList.toggle('is-active', isOn()));
+      };
+      const deco = () => f.computed(el, 'text-decoration-line');
+      toggle('bold', 'Bold', 'font-weight', () => parseInt(f.computed(el, 'font-weight'), 10) >= 600, '700', '400');
+      toggle('italic', 'Italic', 'font-style', () => f.computed(el, 'font-style') === 'italic', 'italic', 'normal');
+      toggle('underline', 'Underline', 'text-decoration-line', () => deco().includes('underline'), 'underline', 'none');
+      toggle('strike', 'Strikethrough', 'text-decoration-line', () => deco().includes('line-through'), 'line-through', 'none');
+
+      f.textSeg(f.row(body, 'Case'), el, {
+        prop: 'text-transform',
+        options: [['none', 'Aa', 'As typed'], ['uppercase', 'AA', 'Uppercase'], ['lowercase', 'aa', 'Lowercase'], ['capitalize', 'Ab', 'Capitalise each word']],
+      });
+      f.iconSeg(f.row(body, 'Align'), el, {
+        prop: 'text-align',
+        options: [['left', 'left', 'Left'], ['center', 'center', 'Centre'], ['right', 'right', 'Right'], ['justify', 'justify', 'Justify']],
+      });
+      f.colourField(body, el, { prop: 'color', label: 'Colour' });
+    },
+
     /** Opacity as a percentage (Thick). */
     opacity(body, el, f) {
       f.numberField(B.mk('div', 'blunt-all', f.row(body, 'Opacity %')), el, { props: ['opacity'], unit: '', scale: 100, min: 0, max: 100, label: 'opacity' });
@@ -217,7 +275,7 @@
 
     /** Which sections have something for this element — the rest get a dimmed icon. */
     relevance(el) {
-      if (!el || !el.isConnected) return { box: false, border: false, colour: false, layout: false, position: false, size: false, opacity: false };
+      if (!el || !el.isConnected) return { box: false, border: false, colour: false, layout: false, position: false, size: false, opacity: false, type: false };
       const cs = getComputedStyle(el);
       const any = (props) => props.some((p) => parseFloat(cs.getPropertyValue(p)) > 0);
       const hasBorder = SIDES.some((s) => cs.getPropertyValue(`border-${s}-style`) !== 'none' && parseFloat(cs.getPropertyValue(`border-${s}-width`)) > 0);
@@ -231,6 +289,7 @@
         position: cs.position !== 'static' || cs.overflow !== 'visible' || ['display', 'position', 'z-index', 'overflow'].some((p) => B.currentStyle(el, p) !== ''),
         size: ['width', 'height', 'min-width', 'min-height', 'max-width', 'max-height'].some((p) => B.currentStyle(el, p) !== '') || cs.maxWidth !== 'none',
         opacity: parseFloat(cs.opacity) < 1,
+        type: hasText || ['font-size', 'font-weight', 'line-height', 'letter-spacing', 'font-style', 'text-decoration-line', 'text-transform'].some((p) => B.currentStyle(el, p) !== ''),
       };
     },
   };
