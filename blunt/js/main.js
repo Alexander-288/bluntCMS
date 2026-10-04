@@ -85,6 +85,15 @@
 
   B.setTool('select');
   B.setDirty(false);
+  try {
+    // A save that changed the page's tags reloads it; say Saved once it's back.
+    if (sessionStorage.getItem('blunt-saved')) {
+      sessionStorage.removeItem('blunt-saved');
+      B.toast('Saved.');
+    }
+  } catch {
+    // no storage
+  }
   if (B.cfg.duplicates.length) {
     B.toast(`These names are used more than once and can't be text-edited: ${B.cfg.duplicates.join(', ')}`, 'error');
   }

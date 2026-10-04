@@ -136,3 +136,21 @@ html.blunt-hide-ui .blunt-unhide { display: block; }
 /* Type tab: the font name, read-only for now */
 .blunt-family { display: flex; align-items: baseline; gap: 8px; padding: 9px 14px; border-radius: 999px; background: rgba(255, 255, 255, .08); font-weight: 600; }
 .blunt-ui .blunt-family-note { color: rgba(255, 255, 255, .45); font-size: 12px; font-weight: 500; }
+
+/* Formatting bar: floats above the text being edited */
+.blunt-richbar {
+  position: fixed;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+.blunt-richbar[hidden], .blunt-richbar [hidden] { display: none; }
+.blunt-richbar .blunt-divider { margin: 0 4px; }
+.blunt-richbar-link { display: flex; }
+.blunt-richbar-link .blunt-input { width: 240px; }

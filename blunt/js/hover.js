@@ -48,7 +48,9 @@
       if (!el) return { el: null, cursor: 'default' };
       const name = el.dataset.blunt;
       if (B.cfg.duplicates.includes(name)) return { el, text: `${name} · name used twice`, blocked: true, cursor: 'not-allowed' };
-      if (el.children.length) return { el, text: `${name} · has tags, can't edit`, blocked: true, cursor: 'not-allowed' };
+      const rich = B.richText && el.tagName !== 'A' && B.richEditable(el);
+      if (el.children.length && !rich) return { el, text: `${name} · has tags, can't edit`, blocked: true, cursor: 'not-allowed' };
+      if (rich) return { el, text: `Formatted text · ${name}`, cursor: 'text' };
       return { el, text: `${el.tagName === 'A' ? 'Link' : 'Text'} · ${name}`, cursor: 'text' };
     }
 

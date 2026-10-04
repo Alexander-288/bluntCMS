@@ -152,6 +152,7 @@ Set `'tier' => 'thick'` in `blunt/config.php` to try it. It edits the same thing
 
 - **Toolbar** sits on the bottom edge: Select, Move (coming soon), Text, Fill, Eyedropper, Reset, then Undo, Redo, Save and Exit
 - **Eyedropper** (`I`) — click an element to pick up its colour; Fill takes over with that colour
+- **Formatted text** — the Text tool also edits blocks that contain bold, italic, underline, strikethrough, links or line breaks. A small bar above the text adds or removes them (select text first for a link). Ctrl+B / I / U work too, and Shift+Enter adds a line break. Blocks with any other HTML (classes, spans, images) stay blocked so nothing is lost. After saving new formatting the page reloads once
 - **Sidebar** sits on the right and the page makes room for it. It shows the page, the selected element with its parents (click one to select it), and the tabs below. Click a section title to fold it
   - **Box** — margin, border and padding, plus width and height with their min and max. Type `auto` or `none` to reset a size
   - **Position** — display, position mode, top/right/bottom/left offsets, z-index (with bring forward / send backward) and overflow. Offsets and z-index only work when position isn't static
