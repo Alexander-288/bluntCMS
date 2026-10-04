@@ -46,4 +46,5 @@ $boot = [
 
 header('Content-Type: text/html; charset=utf-8');
 header('Cache-Control: no-store');
-echo blunt_prepare_page($html, $pageRel, ['siteBase' => $siteBase, 'cmsUrl' => $cmsUrl, 'boot' => $boot]);
+$assets = blunt_tier_assets(blunt_cms_dir(), blunt_tier($config, blunt_cms_dir()));
+echo blunt_prepare_page($html, $pageRel, ['siteBase' => $siteBase, 'cmsUrl' => $cmsUrl, 'boot' => $boot, 'assets' => $assets]);

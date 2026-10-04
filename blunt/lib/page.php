@@ -1,8 +1,6 @@
 <?php
 declare(strict_types=1);
 
-const BLUNT_EDITOR_SCRIPTS = ['core.js', 'tokens.js', 'toolbar.js', 'overlay.js', 'hover.js', 'text.js', 'fill.js', 'picker.js', 'panel.js', 'main.js'];
-
 /**
  * Resolves an href found on $pageRel to a site-relative .html path.
  * Returns ['path' => ..., 'fragment' => '#...'|''] or null for anything that
@@ -75,7 +73,8 @@ function blunt_edit_url(string $cmsUrl, string $path, string $fragment = ''): st
  * injected before </body>. The file on disk is never changed.
  *
  * $opts: siteBase (URL path of the site root, '' at domain root),
- *        cmsUrl (URL path of blunt/), boot (array passed to window.BLUNT)
+ *        cmsUrl (URL path of blunt/), boot (array passed to window.BLUNT),
+ *        assets (['css' => [...], 'js' => [...]] from blunt_tier_assets)
  */
 function blunt_prepare_page(string $html, string $pageRel, array $opts): string
 {
@@ -108,9 +107,13 @@ function blunt_prepare_page(string $html, string $pageRel, array $opts): string
 
     $cms = blunt_escape_attr($opts['cmsUrl']);
     $json = json_encode($opts['boot'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    $boot = "\n<link rel=\"stylesheet\" href=\"$cms/editor.css\">\n<script>window.BLUNT = $json;</script>\n";
-    foreach (BLUNT_EDITOR_SCRIPTS as $script) {
-        $boot .= "<script src=\"$cms/js/$script\"></script>\n";
+    $boot = "\n";
+    foreach ($opts['assets']['css'] as $file) {
+        $boot .= '<link rel="stylesheet" href="' . $cms . '/' . blunt_escape_attr($file) . "\">\n";
+    }
+    $boot .= "<script>window.BLUNT = $json;</script>\n";
+    foreach ($opts['assets']['js'] as $file) {
+        $boot .= '<script src="' . $cms . '/' . blunt_escape_attr($file) . "\"></script>\n";
     }
     $bodyEnd = strripos($html, '</body');
     $bodyAt = $bodyEnd === false ? strlen($html) : $bodyEnd;
