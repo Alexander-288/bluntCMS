@@ -13,6 +13,18 @@ const BLUNT_STYLE_PROPS = [
     'border-style', 'text-align', 'justify-content', 'align-items',
 ];
 
+/** Extra properties only the Thick tier may write: these can move or resize things. */
+const BLUNT_THICK_STYLE_PROPS = [
+    'display', 'position', 'top', 'right', 'bottom', 'left', 'z-index', 'overflow',
+    'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height', 'opacity',
+];
+
+/** The style properties a tier may write. */
+function blunt_style_props(string $tier): array
+{
+    return $tier === 'thick' ? array_merge(BLUNT_STYLE_PROPS, BLUNT_THICK_STYLE_PROPS) : BLUNT_STYLE_PROPS;
+}
+
 const BLUNT_COLOR_PROPS = ['color', 'background-color', 'border-color'];
 
 /** Properties that only accept one of a fixed set of keywords. */
@@ -21,6 +33,17 @@ const BLUNT_KEYWORD_PROPS = [
     'text-align' => ['left', 'center', 'right', 'justify'],
     'justify-content' => ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'],
     'align-items' => ['flex-start', 'center', 'flex-end', 'stretch', 'baseline'],
+    'display' => ['block', 'inline', 'inline-block', 'flex', 'inline-flex', 'grid', 'none'],
+    'position' => ['static', 'relative', 'absolute', 'fixed', 'sticky'],
+    'overflow' => ['visible', 'hidden', 'scroll', 'auto'],
+];
+
+/** Length properties that also take one keyword. */
+const BLUNT_LENGTH_KEYWORDS = [
+    'top' => 'auto', 'right' => 'auto', 'bottom' => 'auto', 'left' => 'auto',
+    'width' => 'auto', 'height' => 'auto', 'min-width' => 'auto', 'min-height' => 'auto',
+    'max-width' => 'none', 'max-height' => 'none',
+    'margin-left' => 'auto', 'margin-right' => 'auto',
 ];
 
 function blunt_is_length(string $v, bool $allowNegative): bool
@@ -37,9 +60,9 @@ function blunt_is_color(string $v): bool
     return preg_match('/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i', $v) === 1;
 }
 
-function blunt_valid_style(string $prop, string $value): bool
+function blunt_valid_style(string $prop, string $value, string $tier = 'light'): bool
 {
-    if (!in_array($prop, BLUNT_STYLE_PROPS, true)) {
+    if (!in_array($prop, blunt_style_props($tier), true)) {
         return false;
     }
     if (in_array($prop, BLUNT_COLOR_PROPS, true)) {
@@ -48,8 +71,14 @@ function blunt_valid_style(string $prop, string $value): bool
     if (isset(BLUNT_KEYWORD_PROPS[$prop])) {
         return in_array($value, BLUNT_KEYWORD_PROPS[$prop], true);
     }
-    if (($prop === 'margin-left' || $prop === 'margin-right') && $value === 'auto') {
+    if ((BLUNT_LENGTH_KEYWORDS[$prop] ?? null) === $value) {
         return true;
+    }
+    if ($prop === 'z-index') {
+        return $value === 'auto' || preg_match('/^-?\d{1,4}$/', $value) === 1;
+    }
+    if ($prop === 'opacity') {
+        return preg_match('/^(0?\.\d+|0|1|1\.0+)$/', $value) === 1;
     }
     if ($prop === 'border-radius') {
         $parts = preg_split('/\s+/', trim($value)) ?: [];
@@ -63,7 +92,7 @@ function blunt_valid_style(string $prop, string $value): bool
         }
         return true;
     }
-    return blunt_is_length($value, str_starts_with($prop, 'margin-'));
+    return blunt_is_length($value, str_starts_with($prop, 'margin-') || in_array($prop, ['top', 'right', 'bottom', 'left'], true));
 }
 
 function blunt_valid_token_name(string $name): bool

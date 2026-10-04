@@ -119,3 +119,82 @@ function test_validate_text(): void
     assert_same(false, blunt_valid_text(str_repeat('a', 10001)));
     assert_same(false, blunt_valid_text("\xff\xfe"));
 }
+
+function test_validate_layout_keywords(): void
+{
+    foreach (['block', 'inline', 'inline-block', 'flex', 'inline-flex', 'grid', 'none'] as $v) {
+        assert_true(blunt_valid_style('display', $v, 'thick'), $v);
+    }
+    foreach (['static', 'relative', 'absolute', 'fixed', 'sticky'] as $v) {
+        assert_true(blunt_valid_style('position', $v, 'thick'), $v);
+    }
+    foreach (['visible', 'hidden', 'scroll', 'auto'] as $v) {
+        assert_true(blunt_valid_style('overflow', $v, 'thick'), $v);
+    }
+    assert_same(false, blunt_valid_style('display', 'table', 'thick'));
+    assert_same(false, blunt_valid_style('position', 'absolute; color: red', 'thick'));
+    assert_same(false, blunt_valid_style('overflow', 'clip', 'thick'));
+}
+
+function test_validate_offsets_allow_negative_and_auto(): void
+{
+    foreach (['top', 'right', 'bottom', 'left'] as $side) {
+        assert_true(blunt_valid_style($side, '12px', 'thick'), $side);
+        assert_true(blunt_valid_style($side, '-8px', 'thick'), $side);
+        assert_true(blunt_valid_style($side, 'auto', 'thick'), $side);
+        assert_true(blunt_valid_style($side, '50%', 'thick'), $side);
+        assert_same(false, blunt_valid_style($side, 'none', 'thick'), $side);
+    }
+}
+
+function test_validate_sizes(): void
+{
+    foreach (['width', 'height'] as $p) {
+        assert_true(blunt_valid_style($p, '320px', 'thick'));
+        assert_true(blunt_valid_style($p, '100%', 'thick'));
+        assert_true(blunt_valid_style($p, 'auto', 'thick'));
+        assert_same(false, blunt_valid_style($p, '-1px', 'thick'));
+        assert_same(false, blunt_valid_style($p, 'none', 'thick'));
+    }
+    foreach (['min-width', 'min-height'] as $p) {
+        assert_true(blunt_valid_style($p, '0', 'thick'));
+        assert_true(blunt_valid_style($p, '10rem', 'thick'));
+        assert_true(blunt_valid_style($p, 'auto', 'thick'));
+        assert_same(false, blunt_valid_style($p, 'none', 'thick'));
+    }
+    foreach (['max-width', 'max-height'] as $p) {
+        assert_true(blunt_valid_style($p, '960px', 'thick'));
+        assert_true(blunt_valid_style($p, 'none', 'thick'));
+        assert_same(false, blunt_valid_style($p, 'auto', 'thick'));
+    }
+}
+
+function test_validate_z_index_and_opacity(): void
+{
+    assert_true(blunt_valid_style('z-index', '0', 'thick'));
+    assert_true(blunt_valid_style('z-index', '10', 'thick'));
+    assert_true(blunt_valid_style('z-index', '-1', 'thick'));
+    assert_true(blunt_valid_style('z-index', 'auto', 'thick'));
+    assert_true(blunt_valid_style('z-index', '9999', 'thick'));
+    assert_same(false, blunt_valid_style('z-index', '10000', 'thick'));
+    assert_same(false, blunt_valid_style('z-index', '1.5', 'thick'));
+    assert_same(false, blunt_valid_style('z-index', '2px', 'thick'));
+
+    assert_true(blunt_valid_style('opacity', '0', 'thick'));
+    assert_true(blunt_valid_style('opacity', '1', 'thick'));
+    assert_true(blunt_valid_style('opacity', '0.35', 'thick'));
+    assert_true(blunt_valid_style('opacity', '.5', 'thick'));
+    assert_same(false, blunt_valid_style('opacity', '1.2', 'thick'));
+    assert_same(false, blunt_valid_style('opacity', '-0.1', 'thick'));
+    assert_same(false, blunt_valid_style('opacity', '50%', 'thick'));
+}
+
+function test_validate_thick_props_are_thick_only(): void
+{
+    foreach (BLUNT_THICK_STYLE_PROPS as $prop) {
+        assert_same(false, blunt_valid_style($prop, '0'), "light: $prop");
+        assert_true(in_array($prop, blunt_style_props('thick'), true), "thick: $prop");
+    }
+    assert_same(BLUNT_STYLE_PROPS, blunt_style_props('light'));
+    assert_same(BLUNT_STYLE_PROPS, blunt_style_props('anything-else'));
+}
