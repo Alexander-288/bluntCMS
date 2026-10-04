@@ -152,7 +152,11 @@ Set `'tier' => 'thick'` in `blunt/config.php` to try it. It edits the same thing
 
 - **Toolbar** sits on the bottom edge: Select, Move (coming soon), Text, Fill, Eyedropper, Reset, then Undo, Redo, Save and Exit
 - **Eyedropper** (`I`) — click an element to pick up its colour; Fill takes over with that colour
-- **Sidebar** sits on the right and the page makes room for it. It shows the page, the selected element with its parents (click one to select it), and the Box, Layout and Style tabs. Click a section title to fold it
+- **Sidebar** sits on the right and the page makes room for it. It shows the page, the selected element with its parents (click one to select it), and the tabs below. Click a section title to fold it
+  - **Box** — margin, border and padding, plus width and height with their min and max. Type `auto` or `none` to reset a size
+  - **Position** — display, position mode, top/right/bottom/left offsets, z-index (with bring forward / send backward) and overflow. Offsets and z-index only work when position isn't static
+  - **Layout** — text alignment, centring, and justify / align / gap on flex and grid containers
+  - **Style** — border, corners, colours and opacity (in %)
 - **Tab** hides the whole editor so you can see the page clean. Press Tab again, or click "Show editor", to bring it back
 
 Known limit: the site's own fixed-position elements and media queries still use the full window width, so they can sit under the sidebar.
