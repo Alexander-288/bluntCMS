@@ -38,6 +38,8 @@
       B.paintClick(el, e);
     } else if (B.tool === 'reset') {
       B.resetEl(el);
+    } else if (B.tool === 'pick') {
+      B.pickPaint(el);
     }
   }, true);
 
@@ -66,7 +68,7 @@
       return;
     }
     if (mod || e.altKey) return;
-    const tool = { v: 'select', t: 'text', f: 'fill', r: 'reset' }[key];
+    const tool = B.toolKeys[key];
     if (tool) {
       B.setTool(tool);
     } else if (e.key === 'Escape') {

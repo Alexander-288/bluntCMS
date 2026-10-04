@@ -6,6 +6,7 @@
   const B = (window.Blunt = {
     cfg: window.BLUNT,
     tool: 'select',
+    toolKeys: { v: 'select', t: 'text', f: 'fill', r: 'reset' }, // a tier's toolbar can add more
     selected: null,
     dirty: false,
     saving: false,

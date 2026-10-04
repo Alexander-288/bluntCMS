@@ -60,7 +60,7 @@
 
   function frame() {
     const el = B.selected;
-    const show = !!el && el.isConnected && (B.tool === 'select' || B.tool === 'fill');
+    const show = !!el && el.isConnected && (B.tool === 'select' || B.tool === 'fill' || B.tool === 'pick');
     layer.hidden = !show;
     if (show) place(el);
     requestAnimationFrame(frame);
