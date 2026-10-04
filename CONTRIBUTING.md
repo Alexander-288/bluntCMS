@@ -41,8 +41,10 @@ Then follow the tutorial's first part to set up the demo.
 
 - `blunt/*.php` — the four entry points: setup, login, edit, save
 - `blunt/lib/` — small PHP files, one job each (scanner, edits, tokens, validation…)
-- `blunt/js/` — the editor, split by feature, sharing a `window.Blunt` object
-- `blunt/editor.css` — all editor styles, prefixed `.blunt-`
+- `blunt/js/` — the shared editor core, split by feature, sharing a `window.Blunt` object
+- `blunt/editor.css` — editor styles shared by every tier, prefixed `.blunt-`
+- `blunt/light/` — Light's toolbar and inspector panel, plus `manifest.php` listing the files to load
+- `tools/build.php` — makes a release zip for one tier
 - `tests/` — the PHP test runner and tests
 - `demo/` — the demo site
 

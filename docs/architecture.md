@@ -24,12 +24,20 @@ blunt/
   save.php        receives changes as JSON, writes them into the files
   lib.php         loads everything in lib/
   lib/            scanner, edits, tokens, validation, paths, auth, backups
-  editor.css      toolbar and handle styling
-  js/             editor: core, tokens, toolbar, overlay, hover, text, fill, picker, panel, main
+  editor.css      styles shared by every tier: handles, tags, controls, picker
+  js/             shared editor core: core, tokens, overlay, hover, text, fill, picker, main
+  light/          Light UI: toolbar, inspector panel, light.css, manifest.php
   backups/        previous versions of each file
   data/           runtime state, like the login lockout
   .htaccess       blocks direct access to config, lib, data and backups
 ```
+
+## Tiers
+
+Each tier (Light, later Thick) is a folder in `blunt/` with its own UI and a `manifest.php`. The manifest lists the tier's CSS and JS files in load order, shared files included. `edit.php` loads whatever the manifest lists.
+
+- `'tier' => 'light'` in `config.php` picks the tier. If it's missing or unknown, Light is used.
+- `php tools/build.php <tier>` makes `dist/bluntcms-<tier>-<version>.zip`. It contains `blunt/` with only that tier's folder, and no config, data or backups.
 
 ## Where changes are saved
 

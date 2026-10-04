@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 function prep(string $html, string $page = 'index.html', string $siteBase = ''): string
 {
-    return blunt_prepare_page($html, $page, ['siteBase' => $siteBase, 'cmsUrl' => $siteBase . '/blunt', 'boot' => ['x' => 1]]);
+    $opts = ['siteBase' => $siteBase, 'cmsUrl' => $siteBase . '/blunt', 'boot' => ['x' => 1]];
+    return blunt_prepare_page($html, $page, $opts + ['assets' => blunt_tier_assets(blunt_cms_dir(), 'light')]);
 }
 
 function test_page_resolve_link(): void
@@ -52,8 +53,10 @@ function test_page_injects_base_and_editor(): void
     assert_true(str_contains($out, '<head data-blunt-id="1"><base href="/sub/">'), $out);
     assert_true(str_contains($out, 'window.BLUNT = {"x":1};'));
     assert_true(str_contains($out, '<link rel="stylesheet" href="/blunt/editor.css">'));
+    assert_true(str_contains($out, '<link rel="stylesheet" href="/blunt/light/light.css">'));
     assert_true(str_contains($out, '<script src="/blunt/js/core.js"></script>'));
-    assert_true(str_contains($out, '<script src="/blunt/js/main.js"></script>'));
+    assert_true(str_contains($out, '<script src="/blunt/light/toolbar.js"></script>'));
+    assert_true(strpos($out, '/blunt/light/panel.js') < strpos($out, '/blunt/js/main.js'));
     assert_true(strpos($out, 'window.BLUNT') < strpos($out, '</body>'));
 }
 

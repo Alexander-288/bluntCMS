@@ -19,7 +19,7 @@ jobs:
           php-version: ${{ matrix.php }}
           coverage: none
       - name: Lint PHP
-        run: for f in blunt/*.php blunt/lib/*.php tests/*.php; do php -l "$f" > /dev/null || exit 1; done
+        run: for f in blunt/*.php blunt/lib/*.php blunt/*/manifest.php tests/*.php tools/*.php; do php -l "$f" > /dev/null || exit 1; done
       - name: Run tests
         run: php tests/run.php
 
@@ -32,4 +32,4 @@ jobs:
         with:
           node-version: '20'
       - name: Check syntax
-        run: for f in blunt/js/*.js; do node --check "$f" || exit 1; done
+        run: for f in blunt/*/*.js; do node --check "$f" || exit 1; done
