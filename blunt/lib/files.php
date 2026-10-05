@@ -20,7 +20,7 @@ function blunt_backup(string $file, string $root, string $dir, int $keep = 10): 
     if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
         throw new BluntError('Could not create the backups folder.', 500);
     }
-    $slug = (string) preg_replace('/[^a-zA-Z0-9]+/', '_', blunt_relpath($root, (string) realpath($file)));
+    $slug = blunt_backup_slug(blunt_relpath($root, (string) realpath($file)));
     $stamp = (new DateTimeImmutable())->format('Ymd-His-u');
     $target = "$dir/$slug.$stamp.bak";
     for ($n = 1; file_exists($target); $n++) {

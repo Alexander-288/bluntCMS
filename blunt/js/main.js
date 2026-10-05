@@ -90,10 +90,11 @@
   B.setTool('select');
   B.setDirty(false);
   try {
-    // A save that changed the page's tags reloads it; say Saved once it's back.
-    if (sessionStorage.getItem('blunt-saved')) {
-      sessionStorage.removeItem('blunt-saved');
-      B.toast('Saved.');
+    // Some actions reload the page (a save that changed its tags, a restore); say what happened once it's back.
+    const message = sessionStorage.getItem('blunt-toast');
+    if (message) {
+      sessionStorage.removeItem('blunt-toast');
+      B.toast(message);
     }
   } catch {
     // no storage

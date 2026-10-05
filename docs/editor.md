@@ -146,7 +146,7 @@ Undo history lives in memory until you save.
 - `Ctrl+S` — Save
 - `Esc` — deselect
 
-## BluntCMS Thick (in progress)
+## BluntCMS Thick
 
 Set `'tier' => 'thick'` in `blunt/config.php` to try it. It edits the same things as Light, with a different layout:
 
@@ -161,6 +161,8 @@ Set `'tier' => 'thick'` in `blunt/config.php` to try it. It edits the same thing
   - **Type** — font size, weight (in steps of 100), line height (like `1.5`), letter spacing, bold / italic / underline / strikethrough for the whole element, letter case, alignment and text colour. The font itself is shown but can't be changed yet
   - **Image** — on a picture: replace it and edit its description (alt text). On anything else: add, change or remove a background image, with size, position and repeat
 - **Images** — double-click a picture with Select, or drop a photo file on it, to replace it. JPG, PNG, GIF, WebP and AVIF up to 8 MB are accepted (no SVG). Uploads go into `uploads/` at the site root; set `'upload_dir' => 'assets/img'` in `blunt/config.php` to use another folder. If the picture has `width` and `height`, its height follows the new image's shape. Pictures with `srcset` or inside `<picture>` can't be replaced yet. An upload stays in the folder even if you undo it
+- **Pages** — click the page name at the top of the sidebar to switch to another page of the site. With unsaved changes it asks first
+- **History** — the clock button next to it lists earlier versions of the page (one is kept every time you save, the last ten), with how many lines differ from now. **Restore** puts one back; the current file is kept as a backup too, so you can go back again. Restoring a page doesn't change the token file
 - **Move** (`M`, the hand) — rearranges repeat blocks: list items, siblings with the same tag and class (like the demo's cards), or the children of an element you mark with `data-blunt-repeat`. Drag a block to move it. Hover a block for a small bar to **duplicate** or **delete** it. A copy gets fresh names (`card-title-2`) and can be edited after you save; the page reloads once after saving. Blocks with text or comments between them can't be rearranged
 - **Tab** hides the whole editor so you can see the page clean. Press Tab again, or click "Show editor", to bring it back
 
