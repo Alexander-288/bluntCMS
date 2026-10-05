@@ -84,11 +84,11 @@ function test_images_attr_changes_are_checked(): void
 
 function test_images_background_styles(): void
 {
-    foreach (["url('uploads/a.jpg')", 'url("../img/b.png")', 'none'] as $ok) {
+    foreach (["url('uploads/a.jpg')", 'url("../img/b.png")', 'url(uploads/c-1a2b.webp)', 'none'] as $ok) {
         assert_true(blunt_valid_style('background-image', $ok, 'thick'), $ok);
         assert_same(false, blunt_valid_style('background-image', $ok), "light: $ok");
     }
-    foreach (['url(javascript:alert(1))', "url('a.jpg') , url('b.jpg')", 'url(a.jpg)', "url('a.jpg\")", 'linear-gradient(red, blue)', "url('data:image/png;base64,x')"] as $bad) {
+    foreach (['url(javascript:alert(1))', "url('a.jpg') , url('b.jpg')", 'url(a b.jpg)', 'url(a.jpg) x', "url('a.jpg\")", 'linear-gradient(red, blue)', "url('data:image/png;base64,x')"] as $bad) {
         assert_same(false, blunt_valid_style('background-image', $bad, 'thick'), $bad);
     }
     assert_true(blunt_valid_style('background-size', 'cover', 'thick'));

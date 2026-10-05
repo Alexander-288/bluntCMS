@@ -84,9 +84,9 @@ function blunt_valid_style(string $prop, string $value, string $tier = 'light'):
         return true;
     }
     if ($prop === 'background-image') {
-        // One image, quoted: url('uploads/a.jpg'). blunt_valid_image_url keeps quotes, brackets and script schemes out.
+        // One image: url(uploads/a.jpg), quotes optional. blunt_valid_image_url keeps quotes, brackets, spaces and script schemes out.
         return $value === 'none'
-            || (preg_match('#^url\(([\'"])(.+)\1\)$#', $value, $m) === 1 && blunt_valid_image_url($m[2]));
+            || (preg_match('#^url\(([\'"]?)(.+)\1\)$#', $value, $m) === 1 && blunt_valid_image_url($m[2]));
     }
     if ($prop === 'z-index') {
         return $value === 'auto' || preg_match('/^-?\d{1,4}$/', $value) === 1;

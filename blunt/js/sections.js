@@ -275,7 +275,7 @@
 
     /** Which sections have something for this element — the rest get a dimmed icon. */
     relevance(el) {
-      if (!el || !el.isConnected) return { box: false, border: false, colour: false, layout: false, position: false, size: false, opacity: false, type: false };
+      if (!el || !el.isConnected) return { box: false, border: false, colour: false, layout: false, position: false, size: false, opacity: false, type: false, image: false };
       const cs = getComputedStyle(el);
       const any = (props) => props.some((p) => parseFloat(cs.getPropertyValue(p)) > 0);
       const hasBorder = SIDES.some((s) => cs.getPropertyValue(`border-${s}-style`) !== 'none' && parseFloat(cs.getPropertyValue(`border-${s}-width`)) > 0);
@@ -289,6 +289,7 @@
         position: cs.position !== 'static' || cs.overflow !== 'visible' || ['display', 'position', 'z-index', 'overflow'].some((p) => B.currentStyle(el, p) !== ''),
         size: ['width', 'height', 'min-width', 'min-height', 'max-width', 'max-height'].some((p) => B.currentStyle(el, p) !== '') || cs.maxWidth !== 'none',
         opacity: parseFloat(cs.opacity) < 1,
+        image: el.tagName === 'IMG' || cs.backgroundImage !== 'none',
         type: hasText || ['font-size', 'font-weight', 'line-height', 'letter-spacing', 'font-style', 'text-decoration-line', 'text-transform'].some((p) => B.currentStyle(el, p) !== ''),
       };
     },

@@ -8,6 +8,7 @@
   const ICONS = {
     ...S.icons,
     grid: svg('<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>'),
+    image: svg('<rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.8" fill="currentColor" stroke="none"/><path d="M4 17l4.5-4.5a1.5 1.5 0 0 1 2.1 0L15 17M13.5 15.5l1.9-1.9a1.5 1.5 0 0 1 2.1 0L20 16"/>'),
     page: svg('<path d="M7 3.5h6.5l5 5v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2zM13.5 3.5v5h5"/>'),
     chevron: svg('<path d="M6 9.5l6 6 6-6"/>', 16),
   };
@@ -18,6 +19,7 @@
     'display', 'position', 'top', 'right', 'bottom', 'left', 'z-index', 'overflow',
     'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height', 'opacity',
     'font-size', 'font-weight', 'line-height', 'letter-spacing', 'font-style', 'text-decoration-line', 'text-transform',
+    'background-image', 'background-size', 'background-position', 'background-repeat',
   );
 
   // [id, label, icon, sections, relevant?]; each section is [key, title, renderer]
@@ -27,6 +29,7 @@
     ['layout', 'Layout', 'grid', [['layout', 'Layout', S.layout]], (r) => r.layout],
     ['style', 'Style', 'colour', [['border', 'Border and corners', S.border], ['colours', 'Colours', S.colour], ['opacity', 'Opacity', S.opacity]], (r) => r.border || r.colour || r.opacity],
     ['type', 'Type', 'type', [['type', 'Text', S.type]], (r) => r.type],
+    ['image', 'Image', 'image', [['image', 'Image', (...a) => S.image(...a)]], (r) => r.image],
   ];
 
   // ---- Remembered state: tab and folded sections ----

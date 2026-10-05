@@ -46,6 +46,7 @@ Each tier is a folder in `blunt/` with its own UI and a `manifest.php`. The mani
 ## Where changes are saved
 
 - **Text and links** — written into the marked element in the `.html` file
+- **Images** (Thick) — `thick/upload.php` checks the file by its content (`getimagesize`, no SVG), names it `<slug>-<hash>.<ext>` in the uploads folder, and answers with the path relative to the page. Saving then writes the `<img>`'s `src` (and `alt`, `width`, `height`) as attribute edits, or a `background-image: url(...)` style
 - **Formatted text** (Thick) — the editor sends a small tree of text and inline tags, never HTML. The server (`lib/rich.php`) builds the HTML itself from `strong b em i u s a br`, with links limited to an `href`. It only does this for blocks whose current content already fits that set. If the save adds or removes tags, it replies `reload`, because the editor's element numbers have shifted
 - **Element styles** — written as an inline `style=""` on the element. The server only accepts a fixed list of properties (`lib/validate.php`). Light's list can't move or resize anything; the Thick tier adds display, position, offsets, z-index, overflow, sizes, opacity and typography
 - **Token styles** — the `--name: value;` line is updated in the token CSS file set in `config.php`
