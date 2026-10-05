@@ -4,6 +4,8 @@
 
 This walks you from nothing to editing your own site. Part 1 uses the demo that ships with BluntCMS, so you can try everything safely. Part 2 puts it on your site.
 
+**Using Thick?** Everything here works the same, with a different layout: the toolbar sits on the bottom edge and the inspector is a sidebar on the right. Thick's extra tools (images, formatted text, moving blocks, pages and history) are described in **[the editor guide](editor.md#bluntcms-thick)**.
+
 ## Part 1 — Try it on the demo
 
 ### 1. Start a local server

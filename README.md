@@ -6,7 +6,11 @@
 
 No database. No build step. No admin dashboard to learn. *Stupid simple, on purpose.*
 
-![The BluntCMS editor: a card selected with Illustrator-style handles, the inspector panel, and the pill toolbar](docs/images/editor.png)
+It comes in two editions: **Light**, small and simple, and **Thick**, which adds images, formatted text, layout, typography, moving blocks around and page history.
+
+![BluntCMS Thick: a card selected with Illustrator-style handles, the docked sidebar, and the toolbar on the bottom edge](docs/images/thick-editor.png)
+
+*BluntCMS Thick. Light looks like [this](docs/images/editor.png): a floating toolbar and a small inspector.*
 
 ## Why it's different
 
@@ -31,7 +35,18 @@ php -S localhost:8000
 
 The demo page walks you through six things to try. After you save, run `git diff demo/` and see how little changed.
 
+The repo runs **Light** by default. To try **Thick**, add `'tier' => 'thick',` to `blunt/config.php` and reload the editor.
+
 **Using it on your own site?** Follow the **[tutorial](docs/tutorial.md)** — it takes about ten minutes.
+
+## Pick your edition
+
+Download one zip from the **[releases](https://github.com/Alexander-288/bluntCMS/releases)** and unzip it next to your `index.html`. Each zip holds a single `blunt/` folder.
+
+- **[BluntCMS 2.0.0-Thick](https://github.com/Alexander-288/bluntCMS/releases/tag/v2.0.0-thick)** — everything below, including images and moving blocks
+- **[BluntCMS 1.0.0-Light](https://github.com/Alexander-288/bluntCMS/releases/tag/v1.0.0-light)** — just the basics, nothing that can move or resize your layout
+
+You can switch later: replace the `blunt/` folder with the other zip, keeping your `blunt/config.php` and `blunt/backups/`.
 
 **Want to hear about new versions?** Click **Watch → Custom → Releases** at the top of this page. Stars don't send notifications; watching for releases does. Questions and news live in **[Discussions](https://github.com/Alexander-288/bluntCMS/discussions)**.
 
@@ -45,6 +60,16 @@ The demo page walks you through six things to try. After you save, run `git diff
 - **Colours** — text, background and border
 - **Layout** — text alignment, centring, and justify / align / gap on flex and grid containers
 - **Design tokens** — CSS variables like `--card-radius`; edit once, update everywhere
+
+**Thick adds:**
+
+- **Images** — replace a picture by double-clicking it or dropping a photo on it, edit its alt text, set background images
+- **Formatted text** — bold, italic, underline, strikethrough and links inside a paragraph, with a small formatting bar
+- **Position and size** — display, position, offsets, z-index, overflow, width and height with min and max, opacity
+- **Typography** — font size, weight, line height, letter spacing, letter case
+- **Repeat blocks** — drag cards or list items to reorder them; duplicate or delete them
+- **Pages and history** — switch pages from the sidebar, and restore any of the last ten saved versions
+- **A design-tool layout** — a sidebar docked to the right, a toolbar on the bottom edge, and Tab to hide it all
 
 Mark editable text in your HTML:
 
@@ -65,14 +90,14 @@ Styles need no marking — select any element.
 
 ## Release naming
 
-BluntCMS ships in tiers. Each tier builds on the one before it.
+BluntCMS ships in tiers. Each tier builds on the one before it, and each has its own version, written `MAJOR.MINOR.PATCH-Tier`.
 
-- **BluntCMS Light** — *the base of everything.* Text, links and style editing, single admin. **This is the current release: 1.0.0-Light.**
-- **BluntCMS Thick** — Light plus *image uploads*, and positioning, sizing and display controls in the inspector.
+- **BluntCMS Light** — *the base of everything.* Text, links and style editing, single admin. **Current release: 1.0.0-Light.**
+- **BluntCMS Thick** — Light plus images, formatted text, layout and typography controls, repeat blocks and page history. **Current release: 2.0.0-Thick.**
 - **BluntCMS Co-op** — *idea stage.* Possibly multiple users.
-- **FattCMS** — *the fat cousin.* A separate, heavier project for everything that doesn't belong in Blunt. **Not yet avaialble**
+- **FattCMS** — *the fat cousin.* A separate, heavier project for everything that doesn't belong in Blunt. **Not available yet.**
 
-Names beyond Light are not final.
+Names beyond Thick are not final.
 
 ## Requirements
 

@@ -64,3 +64,17 @@ function test_tier_assets_rejects_bad_manifest(): void
     $dir = tier_fixture(['bad' => '<?php return ["js" => "core.js"];']);
     assert_throws(fn () => blunt_tier_assets($dir, 'bad'), 'manifest');
 }
+
+function test_tier_falls_back_to_whichever_tier_is_installed(): void
+{
+    $dir = tier_fixture(['thick' => '<?php return [];']);
+    assert_same('thick', blunt_tier([], $dir), 'a Thick-only install needs no tier setting');
+    assert_same('thick', blunt_tier(['tier' => 'light'], $dir));
+}
+
+function test_tier_versions(): void
+{
+    assert_same('1.0.0-Light', blunt_tier_version(blunt_cms_dir(), 'light'));
+    assert_same('2.0.0-Thick', blunt_tier_version(blunt_cms_dir(), 'thick'));
+    assert_same('', blunt_tier_version(tier_fixture(['x' => '<?php return [];']), 'x'));
+}

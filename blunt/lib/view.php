@@ -26,5 +26,5 @@ function blunt_render(string $title, string $body): void
         . 'code{padding:1px 5px;border-radius:6px;background:#f0f0f0}'
         . 'footer{margin-top:20px;color:#999;font-size:12px;text-align:center}'
         . '</style></head><body><main><h1>' . e($title) . '</h1>' . $body
-        . '<footer>BluntCMS ' . e(BLUNT_VERSION) . '</footer></main></body></html>';
+        . '<footer>BluntCMS ' . e(blunt_version()) . '</footer></main></body></html>';
 }

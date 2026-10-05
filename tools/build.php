@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-// Usage: php tools/build.php light   → dist/bluntcms-light-<version>.zip
+// Usage: php tools/build.php thick   → dist/bluntcms-2.0.0-thick.zip (version from the tier manifest)
 // Zips blunt/ with only the chosen tier's UI folder, without config, data or backups.
 
 require __DIR__ . '/../blunt/lib.php';
@@ -25,7 +25,7 @@ $dist = dirname(__DIR__) . '/dist';
 if (!is_dir($dist)) {
     mkdir($dist);
 }
-$out = "$dist/bluntcms-$tier-" . BLUNT_VERSION . '.zip';
+$out = "$dist/bluntcms-" . strtolower(blunt_tier_version($src, $tier) ?: $tier) . '.zip';
 if (is_file($out)) {
     unlink($out);
 }

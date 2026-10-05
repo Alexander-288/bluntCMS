@@ -1,6 +1,7 @@
 <?php
 // BluntCMS Thick: editor files in load order, relative to blunt/.
 return [
+    'version' => '2.0.0-Thick',
     'css' => ['editor.css', 'thick/thick.css'],
     'js' => [
         'js/core.js', 'js/tokens.js', 'thick/toolbar.js', 'js/overlay.js', 'js/hover.js',
