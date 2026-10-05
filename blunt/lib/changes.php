@@ -96,6 +96,35 @@ function blunt_apply_changes(string $html, ?string $css, array $changes, string 
                 }
                 break;
 
+            case 'attr':
+                // Thick: an image's src, alt and size attributes.
+                $id = $change['id'] ?? null;
+                $attr = (string) ($change['name'] ?? '');
+                $value = $change['value'] ?? null;
+                if (!is_int($id) || !isset($tags[$id])) {
+                    throw new BluntError("Change $n points at an element that doesn't exist.");
+                }
+                $tag = $tags[$id];
+                if ($tier !== 'thick' || !is_string($value) || !in_array($attr, ['src', 'alt', 'width', 'height'], true)) {
+                    throw new BluntError("Changing the \"$attr\" attribute is not allowed.");
+                }
+                if ($tag['name'] !== 'img') {
+                    throw new BluntError('Image changes work only on images.');
+                }
+                if ($attr === 'src' && blunt_attr($tag, 'srcset') !== null) {
+                    throw new BluntError("This image uses srcset, so replacing its src alone wouldn't show.");
+                }
+                $ok = match ($attr) {
+                    'src' => blunt_valid_image_url($value),
+                    'alt' => strlen($value) <= 1000 && blunt_valid_text($value),
+                    default => preg_match('/^\d{1,5}$/', $value) === 1,
+                };
+                if (!$ok) {
+                    throw new BluntError("That value for \"$attr\" is not allowed.");
+                }
+                $edits[] = blunt_set_attr_edit($html, $tag, $attr, $attr === 'alt' ? $value : trim($value));
+                break;
+
             case 'token':
                 if ($css === null) {
                     throw new BluntError('No token file is set up.');

@@ -18,6 +18,7 @@ const BLUNT_THICK_STYLE_PROPS = [
     'display', 'position', 'top', 'right', 'bottom', 'left', 'z-index', 'overflow',
     'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height', 'opacity',
     'font-size', 'font-weight', 'line-height', 'letter-spacing', 'font-style', 'text-decoration-line', 'text-transform',
+    'background-image', 'background-size', 'background-position', 'background-repeat',
 ];
 
 /** The style properties a tier may write. */
@@ -40,6 +41,9 @@ const BLUNT_KEYWORD_PROPS = [
     'font-style' => ['normal', 'italic'],
     'text-decoration-line' => ['none', 'underline', 'line-through'],
     'text-transform' => ['none', 'uppercase', 'lowercase', 'capitalize'],
+    'background-size' => ['auto', 'cover', 'contain'],
+    'background-position' => ['center', 'top', 'bottom', 'left', 'right'],
+    'background-repeat' => ['no-repeat', 'repeat'],
 ];
 
 /** Length properties that also take one keyword. */
@@ -78,6 +82,11 @@ function blunt_valid_style(string $prop, string $value, string $tier = 'light'):
     }
     if ((BLUNT_LENGTH_KEYWORDS[$prop] ?? null) === $value) {
         return true;
+    }
+    if ($prop === 'background-image') {
+        // One image, quoted: url('uploads/a.jpg'). blunt_valid_image_url keeps quotes, brackets and script schemes out.
+        return $value === 'none'
+            || (preg_match('#^url\(([\'"])(.+)\1\)$#', $value, $m) === 1 && blunt_valid_image_url($m[2]));
     }
     if ($prop === 'z-index') {
         return $value === 'auto' || preg_match('/^-?\d{1,4}$/', $value) === 1;
