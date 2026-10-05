@@ -130,7 +130,12 @@
   // A record is one property change:
   // { kind: 'style', el, id, prop, before, after } | { kind: 'text'|'href', el, name, before, after }
   // | { kind: 'token', name, before, after } | { kind: 'rich', el, name, before, after } (innerHTML, Thick)
-  B.keyOf = (r) => (r.kind === 'style' ? `style:${r.id}:${r.prop}` : `${r.kind === 'rich' ? 'text' : r.kind}:${r.name}`);
+  // | { kind: 'attr', el, id, attr, before, after } (an image's src / alt / width / height, Thick)
+  B.keyOf = (r) => {
+    if (r.kind === 'style') return `style:${r.id}:${r.prop}`;
+    if (r.kind === 'attr') return `attr:${r.id}:${r.attr}`;
+    return `${r.kind === 'rich' ? 'text' : r.kind}:${r.name}`;
+  };
 
   B.styleRec = (el, prop, before, after) => ({ kind: 'style', el, id: Number(el.dataset.bluntId), prop, before, after });
 
@@ -151,6 +156,8 @@
       else r.el.style.removeProperty(r.prop);
     } else if (r.kind === 'text') {
       r.el.textContent = value;
+    } else if (r.kind === 'attr') {
+      r.el.setAttribute(r.attr, value);
     } else if (r.kind === 'rich') {
       r.el.innerHTML = value; // the editor's own markup, so links keep data-blunt-href
     } else if (r.kind === 'href') {
@@ -212,6 +219,8 @@
         if (p.value) s.set[p.prop] = p.value;
         else s.unset.push(p.prop);
         styles.set(p.id, s);
+      } else if (p.kind === 'attr') {
+        out.push({ type: 'attr', id: p.id, name: p.attr, value: p.value });
       } else if (p.kind === 'rich') {
         // Formatting left? Send the tree. Plain text again? Send it as text, exactly like Light.
         const box = document.createElement('div');

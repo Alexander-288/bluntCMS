@@ -40,3 +40,6 @@ blunt/backups/*
 
 # Release zips (php tools/build.php <tier>)
 dist/
+
+# Images uploaded while trying the demo (Thick)
+/uploads/

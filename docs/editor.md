@@ -159,6 +159,8 @@ Set `'tier' => 'thick'` in `blunt/config.php` to try it. It edits the same thing
   - **Layout** — text alignment, centring, and justify / align / gap on flex and grid containers
   - **Style** — border, corners, colours and opacity (in %)
   - **Type** — font size, weight (in steps of 100), line height (like `1.5`), letter spacing, bold / italic / underline / strikethrough for the whole element, letter case, alignment and text colour. The font itself is shown but can't be changed yet
+  - **Image** — on a picture: replace it and edit its description (alt text). On anything else: add, change or remove a background image, with size, position and repeat
+- **Images** — double-click a picture with Select, or drop a photo file on it, to replace it. JPG, PNG, GIF, WebP and AVIF up to 8 MB are accepted (no SVG). Uploads go into `uploads/` at the site root; set `'upload_dir' => 'assets/img'` in `blunt/config.php` to use another folder. If the picture has `width` and `height`, its height follows the new image's shape. Pictures with `srcset` or inside `<picture>` can't be replaced yet. An upload stays in the folder even if you undo it
 - **Tab** hides the whole editor so you can see the page clean. Press Tab again, or click "Show editor", to bring it back
 
 Known limit: the site's own fixed-position elements and media queries still use the full window width, so they can sit under the sidebar.

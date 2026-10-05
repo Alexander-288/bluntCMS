@@ -47,6 +47,7 @@ nav a { color: inherit; }
 .prose { max-width: 40em; padding-bottom: 32px; }
 .prose h2 { margin: 32px 0 8px; font-size: 22px; }
 .prose p { margin: 0 0 12px; }
+.prose img { display: block; max-width: 100%; height: auto; margin: 0 0 12px; border-radius: var(--card-radius); }
 
 footer { padding: 24px 0 48px; color: #6b6b6b; font-size: 14px; }
 footer p { margin: 0; }
