@@ -17,4 +17,5 @@ require_once __DIR__ . '/lib/tier.php';
 require_once __DIR__ . '/lib/rich.php';
 require_once __DIR__ . '/lib/images.php';
 require_once __DIR__ . '/lib/structure.php';
+require_once __DIR__ . '/lib/site.php';
 require_once __DIR__ . '/lib/changes.php';
