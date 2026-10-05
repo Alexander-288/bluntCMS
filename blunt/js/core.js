@@ -282,7 +282,7 @@
     if (data.reload) {
       // Tags were added or removed, so the element numbers changed: load the page fresh.
       try {
-        sessionStorage.setItem('blunt-saved', '1');
+        sessionStorage.setItem('blunt-toast', 'Saved.');
       } catch {
         // no storage: the reload just won't say Saved
       }

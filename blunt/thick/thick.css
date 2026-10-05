@@ -183,3 +183,47 @@ html.blunt-hide-ui .blunt-unhide { display: block; }
 .blunt-dragging { opacity: .55; outline: 2px dashed #1a1a1a !important; outline-offset: 3px; }
 [data-blunt-copy] { outline: 2px dashed rgba(26, 26, 26, .45); outline-offset: 3px; }
 html[data-blunt-tool="move"] body :not(.blunt-ui, .blunt-ui *) { user-select: none; }
+
+/* Page switcher and history: a panel over the sidebar body */
+.blunt-pagepill.is-button { cursor: pointer; transition: background-color .15s; }
+.blunt-pagepill.is-button:hover, .blunt-pagepill.is-open { background: rgba(255, 255, 255, .14); }
+.blunt-pagepill svg:last-child { flex: none; margin-left: auto; opacity: .6; transition: transform .15s; }
+.blunt-pagepill.is-open svg:last-child { transform: rotate(180deg); }
+.blunt-sb-menu {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  overflow-y: auto;
+  background: #1a1a1a;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .25) transparent;
+}
+.blunt-sb-menu[hidden], .blunt-sb-item[hidden] { display: none; }
+.blunt-ui .blunt-sb-menu-title { margin: 0; font-size: 12px; font-weight: 600; }
+.blunt-sb-list { display: grid; gap: 2px; }
+.blunt-sb-item {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  margin: 0;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+.blunt-sb-item:hover { background: rgba(255, 255, 255, .08); }
+.blunt-sb-item.is-current { background: rgba(255, 255, 255, .12); }
+.blunt-sb-item.is-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: default; }
+.blunt-sb-item.is-row > div { display: grid; gap: 2px; min-width: 0; }
+.blunt-ui .blunt-sb-item-main { overflow: hidden; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.blunt-ui .blunt-sb-item-sub { overflow: hidden; color: rgba(255, 255, 255, .5); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.blunt-pill.is-small { width: auto; flex: none; padding: 6px 12px; font-size: 12px; }

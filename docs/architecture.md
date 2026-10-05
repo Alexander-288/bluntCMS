@@ -38,7 +38,7 @@ blunt/
 Each tier is a folder in `blunt/` with its own UI and a `manifest.php`. The manifest lists the tier's CSS and JS files in load order, shared files included. `edit.php` loads whatever the manifest lists.
 
 - `light/` — floating toolbar and inspector panel
-- `thick/` — toolbar docked to the bottom edge, sidebar docked to the right (work in progress)
+- `thick/` — toolbar docked to the bottom edge, sidebar docked to the right, plus its own endpoints: `upload.php` (images) and `site.php` (pages and history)
 - The inspector's controls (`js/fields.js`) and tab contents (`js/sections.js`) are shared, so both tiers edit styles the same way
 - `'tier' => 'light'` (or `'thick'`) in `config.php` picks the tier. If it's missing or unknown, Light is used.
 - `php tools/build.php <tier>` makes `dist/bluntcms-<tier>-<version>.zip`. It contains `blunt/` with only that tier's folder, and no config, data or backups.
@@ -46,6 +46,7 @@ Each tier is a folder in `blunt/` with its own UI and a `manifest.php`. The mani
 ## Where changes are saved
 
 - **Text and links** — written into the marked element in the `.html` file
+- **Restoring** (Thick) — `thick/site.php` lists a page's backups and puts one back. It backs up the current file first, so a restore can be undone the same way. The token file isn't part of a page restore
 - **Rearranged blocks** (Thick) — the editor sends a container's final list of children (`{id}` to keep, `{copy}` to duplicate; missing ones are deleted). The server (`lib/structure.php`) cuts the container into chunks, each child plus the whitespace before it, and joins them in the new order, so indentation stays and only whole blocks move. Other edits in the same save are applied first, and copies get free `-2`, `-3` names
 - **Images** (Thick) — `thick/upload.php` checks the file by its content (`getimagesize`, no SVG), names it `<slug>-<hash>.<ext>` in the uploads folder, and answers with the path relative to the page. Saving then writes the `<img>`'s `src` (and `alt`, `width`, `height`) as attribute edits, or a `background-image: url(...)` style
 - **Formatted text** (Thick) — the editor sends a small tree of text and inline tags, never HTML. The server (`lib/rich.php`) builds the HTML itself from `strong b em i u s a br`, with links limited to an `href`. It only does this for blocks whose current content already fits that set. If the save adds or removes tags, it replies `reload`, because the editor's element numbers have shifted
