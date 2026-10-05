@@ -60,6 +60,8 @@ try {
         'ok' => true,
         'hash' => hash('sha256', $out['html']),
         'tokenHash' => $out['css'] !== null ? hash('sha256', $out['css']) : null,
+        // Formatted text can add or remove tags, which shifts the element numbers the editor uses.
+        'reload' => count(blunt_scan($out['html'])) !== count(blunt_scan($html)),
     ]);
 } catch (BluntError $e) {
     http_response_code($e->status);

@@ -23,10 +23,14 @@ function blunt_apply_changes(string $html, ?string $css, array $changes, string 
         switch ($type) {
             case 'text':
             case 'href':
+            case 'rich':
                 $name = (string) ($change['name'] ?? '');
                 $value = $change['value'] ?? null;
-                if (!is_string($value)) {
-                    throw new BluntError("Change $n has no value.");
+                if ($type === 'rich' && $tier !== 'thick') {
+                    throw new BluntError('Formatted text is not allowed in this edition.');
+                }
+                if ($type === 'rich' ? !is_array($value) : !is_string($value)) {
+                    throw new BluntError($value === null ? "Change $n has no value." : "Change $n is malformed.");
                 }
                 $ids = $named[$name] ?? [];
                 if ($ids === []) {
@@ -36,7 +40,16 @@ function blunt_apply_changes(string $html, ?string $css, array $changes, string 
                     throw new BluntError("The name \"$name\" is used more than once on this page.");
                 }
                 $tag = $tags[$ids[0]];
-                if ($type === 'text') {
+                if ($type === 'rich') {
+                    $range = blunt_content_range($html, $tags, $tag['index']);
+                    if ($range === null) {
+                        throw new BluntError("Can't find where \"$name\" ends in the file.");
+                    }
+                    if (!blunt_rich_editable(substr($html, $range['start'], $range['end'] - $range['start']))) {
+                        throw new BluntError("\"$name\" contains HTML that can't be edited here.");
+                    }
+                    $edits[] = [$range['start'], $range['end'], blunt_rich_html($value)];
+                } elseif ($type === 'text') {
                     if (!blunt_valid_text($value)) {
                         throw new BluntError("The text for \"$name\" is too long or not valid text.");
                     }

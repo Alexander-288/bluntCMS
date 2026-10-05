@@ -14,4 +14,5 @@ require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/lib/view.php';
 require_once __DIR__ . '/lib/page.php';
 require_once __DIR__ . '/lib/tier.php';
+require_once __DIR__ . '/lib/rich.php';
 require_once __DIR__ . '/lib/changes.php';
