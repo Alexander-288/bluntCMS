@@ -26,6 +26,10 @@
 
     e.preventDefault();
     e.stopPropagation();
+    if (B.tool !== 'move' && e.target.closest('[data-blunt-copy]')) {
+      B.toast('This copy is new. Save first, then you can edit it.');
+      return;
+    }
     if (B.tool === 'text') {
       B.textClick(e.target);
       return;

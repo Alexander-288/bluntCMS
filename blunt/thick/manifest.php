@@ -5,6 +5,6 @@ return [
     'js' => [
         'js/core.js', 'js/tokens.js', 'thick/toolbar.js', 'js/overlay.js', 'js/hover.js',
         'js/text.js', 'js/fill.js', 'js/picker.js', 'js/tooltip.js', 'js/fields.js', 'js/sections.js',
-        'thick/images.js', 'thick/sidebar.js', 'thick/richbar.js', 'js/main.js',
+        'thick/images.js', 'thick/blocks.js', 'thick/sidebar.js', 'thick/richbar.js', 'js/main.js',
     ],
 ];

@@ -150,7 +150,7 @@ Undo history lives in memory until you save.
 
 Set `'tier' => 'thick'` in `blunt/config.php` to try it. It edits the same things as Light, with a different layout:
 
-- **Toolbar** sits on the bottom edge: Select, Move (coming soon), Text, Fill, Eyedropper, Reset, then Undo, Redo, Save and Exit
+- **Toolbar** sits on the bottom edge: Select, Move, Text, Fill, Eyedropper, Reset, then Undo, Redo, Save and Exit
 - **Eyedropper** (`I`) — click an element to pick up its colour; Fill takes over with that colour
 - **Formatted text** — the Text tool also edits blocks that contain bold, italic, underline, strikethrough, links or line breaks. A small bar above the text adds or removes them (select text first for a link). Ctrl+B / I / U work too, and Shift+Enter adds a line break. Blocks with any other HTML (classes, spans, images) stay blocked so nothing is lost. After saving new formatting the page reloads once
 - **Sidebar** sits on the right and the page makes room for it. It shows the page, the selected element with its parents (click one to select it), and the tabs below. Click a section title to fold it
@@ -161,6 +161,7 @@ Set `'tier' => 'thick'` in `blunt/config.php` to try it. It edits the same thing
   - **Type** — font size, weight (in steps of 100), line height (like `1.5`), letter spacing, bold / italic / underline / strikethrough for the whole element, letter case, alignment and text colour. The font itself is shown but can't be changed yet
   - **Image** — on a picture: replace it and edit its description (alt text). On anything else: add, change or remove a background image, with size, position and repeat
 - **Images** — double-click a picture with Select, or drop a photo file on it, to replace it. JPG, PNG, GIF, WebP and AVIF up to 8 MB are accepted (no SVG). Uploads go into `uploads/` at the site root; set `'upload_dir' => 'assets/img'` in `blunt/config.php` to use another folder. If the picture has `width` and `height`, its height follows the new image's shape. Pictures with `srcset` or inside `<picture>` can't be replaced yet. An upload stays in the folder even if you undo it
+- **Move** (`M`, the hand) — rearranges repeat blocks: list items, siblings with the same tag and class (like the demo's cards), or the children of an element you mark with `data-blunt-repeat`. Drag a block to move it. Hover a block for a small bar to **duplicate** or **delete** it. A copy gets fresh names (`card-title-2`) and can be edited after you save; the page reloads once after saving. Blocks with text or comments between them can't be rearranged
 - **Tab** hides the whole editor so you can see the page clean. Press Tab again, or click "Show editor", to bring it back
 
 Known limit: the site's own fixed-position elements and media queries still use the full window width, so they can sit under the sidebar.

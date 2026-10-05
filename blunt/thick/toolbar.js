@@ -17,16 +17,17 @@
     save: svg('<path d="M5 12.5l4.5 4.5L19 7.5" stroke-width="2.2"/>'),
     exit: svg('<path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke-width="2.2"/>'),
   };
-  // [id, label, key]; move arrives with repeat blocks (phase 7)
+  // [id, label, key]
   const TOOLS = [
     ['select', 'Select', 'V'],
-    ['move', 'Move · coming soon', ''],
+    ['move', 'Move blocks', 'M'],
     ['text', 'Text', 'T'],
     ['fill', 'Fill', 'F'],
     ['pick', 'Eyedropper', 'I'],
     ['reset', 'Reset', 'R'],
   ];
   B.toolKeys.i = 'pick';
+  B.toolKeys.m = 'move';
 
   const bar = B.mk('div', 'blunt-ui blunt-toolbar blunt-dock', document.body);
   bar.setAttribute('role', 'toolbar');
@@ -47,10 +48,6 @@
   for (const [id, label, key] of TOOLS) {
     const b = button(id, label, key);
     b.classList.add('is-blobbed');
-    if (id === 'move') {
-      b.disabled = true;
-      continue;
-    }
     b.addEventListener('click', () => B.setTool(id));
     toolButtons[id] = b;
   }

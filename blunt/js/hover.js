@@ -43,6 +43,11 @@
     const link = t.closest('a[href]');
     if (link && p.mod) return { el: link, text: 'Open link', cursor: 'pointer' };
 
+    // A new copy only exists in the editor until it's saved.
+    const copy = t.closest('[data-blunt-copy]');
+    if (copy && B.tool !== 'move') return { el: copy, text: 'New copy · save to edit it', blocked: true, cursor: 'not-allowed' };
+    if (B.tool === 'move' && B.moveHint) return B.moveHint(t);
+
     if (B.tool === 'text') {
       const el = t.closest('[data-blunt]');
       if (!el) return { el: null, cursor: 'default' };

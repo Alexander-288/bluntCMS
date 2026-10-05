@@ -131,9 +131,11 @@
   // { kind: 'style', el, id, prop, before, after } | { kind: 'text'|'href', el, name, before, after }
   // | { kind: 'token', name, before, after } | { kind: 'rich', el, name, before, after } (innerHTML, Thick)
   // | { kind: 'attr', el, id, attr, before, after } (an image's src / alt / width / height, Thick)
+  // | { kind: 'order', el, id, before, after } (a container's children as "18,copy:18:1,22", Thick)
   B.keyOf = (r) => {
     if (r.kind === 'style') return `style:${r.id}:${r.prop}`;
     if (r.kind === 'attr') return `attr:${r.id}:${r.attr}`;
+    if (r.kind === 'order') return `order:${r.id}`;
     return `${r.kind === 'rich' ? 'text' : r.kind}:${r.name}`;
   };
 
@@ -158,6 +160,8 @@
       r.el.textContent = value;
     } else if (r.kind === 'attr') {
       r.el.setAttribute(r.attr, value);
+    } else if (r.kind === 'order') {
+      B.applyOrder(r.el, value);
     } else if (r.kind === 'rich') {
       r.el.innerHTML = value; // the editor's own markup, so links keep data-blunt-href
     } else if (r.kind === 'href') {
@@ -219,6 +223,9 @@
         if (p.value) s.set[p.prop] = p.value;
         else s.unset.push(p.prop);
         styles.set(p.id, s);
+      } else if (p.kind === 'order') {
+        const items = p.value ? p.value.split(',') : [];
+        out.push({ type: 'order', parent: p.id, items: items.map((k) => (k.startsWith('copy:') ? { copy: Number(k.split(':')[1]) } : { id: Number(k) })) });
       } else if (p.kind === 'attr') {
         out.push({ type: 'attr', id: p.id, name: p.attr, value: p.value });
       } else if (p.kind === 'rich') {
