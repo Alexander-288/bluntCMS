@@ -13,6 +13,7 @@ function blunt_apply_changes(string $html, ?string $css, array $changes, string 
     $edits = [];
     $styles = [];
     $tokens = [];
+    $orders = [];
 
     foreach ($changes as $i => $change) {
         $n = (int) $i + 1;
@@ -125,6 +126,32 @@ function blunt_apply_changes(string $html, ?string $css, array $changes, string 
                 $edits[] = blunt_set_attr_edit($html, $tag, $attr, $attr === 'alt' ? $value : trim($value));
                 break;
 
+            case 'order':
+                // Thick: a container's children in their new order, with copies; children left out are removed.
+                $parent = $change['parent'] ?? null;
+                $items = $change['items'] ?? null;
+                if ($tier !== 'thick') {
+                    throw new BluntError('Rearranging blocks is not allowed in this edition.');
+                }
+                if (!is_int($parent) || !isset($tags[$parent])) {
+                    throw new BluntError("Change $n points at an element that doesn't exist.");
+                }
+                if (!is_array($items) || !array_is_list($items)) {
+                    throw new BluntError("Change $n is malformed.");
+                }
+                foreach ($items as $item) {
+                    $ok = is_array($item) && count($item) === 1
+                        && ((isset($item['id']) && is_int($item['id'])) || (isset($item['copy']) && is_int($item['copy'])));
+                    if (!$ok) {
+                        throw new BluntError("Change $n is malformed.");
+                    }
+                }
+                if (isset($orders[$parent])) {
+                    throw new BluntError('The same container is rearranged twice in one save.');
+                }
+                $orders[$parent] = $items;
+                break;
+
             case 'token':
                 if ($css === null) {
                     throw new BluntError('No token file is set up.');
@@ -149,6 +176,9 @@ function blunt_apply_changes(string $html, ?string $css, array $changes, string 
         }
     }
     $newHtml = blunt_apply_edits($html, $edits);
+    if ($orders !== []) {
+        $newHtml = blunt_apply_orders($html, $tags, $edits, $newHtml, $orders);
+    }
     foreach ($tokens as $name => $value) {
         $css = blunt_set_token((string) $css, $name, $value);
     }
